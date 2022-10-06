@@ -1,23 +1,24 @@
-import React from 'react';
-import { Route, Routes } from 'react-router-dom';
-import './App.css';
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
+import AboutUs from "./pages/aboutus-page/about-us";
 
-import Landing from './pages/landing/landing.jsx';
-import Login from './pages/login/login.jsx';
+import Landing from "./pages/landing/landing.jsx";
+//import Login from './pages/login/login.jsx';
 
-import Signup from './pages/signup/signup.jsx';
+//import Signup from './pages/signup/signup.jsx';
 
-import { useStore } from './store/store';
+//import { useStore } from './store/store';
 
 function App() {
-  const [state] = useStore();
-  const { user: currentUser } = state;
+  //const [state] = useStore();
+  //const { user: currentUser } = state;
 
   return (
     <React.Suspense fallback={<div>Loading...</div>}>
       <Routes>
         <>
-          <Route
+          {/* <Route
             path="/login"
             element={<Login />}
           />
@@ -28,6 +29,10 @@ function App() {
           <Route
             path="/signup"
             element={<Signup />}
+          /> */}
+          <Route
+            path="/aboutUs"
+            element={<AboutUs />}
           />
           <Route
             path="*"

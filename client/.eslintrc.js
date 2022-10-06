@@ -3,14 +3,17 @@ module.exports = {
   "env": {
     "browser": true,
     "es2021": true,
-    "jest": true,
   },
   "settings": {
     "react": {
       "version": "detect",
     },
   },
-  "extends": ["eslint:recommended", "plugin:react/recommended",],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+ 
   "parserOptions": {
     
     "ecmaFeatures": {
@@ -21,11 +24,9 @@ module.exports = {
   },
  
   "plugins": [
-    "unused-imports"
+   
   ],
   "rules": {
-    "no-unused-vars": "off",
-    "import/prefer-default-export": "off",
     "object-curly-spacing": [
       2,
       "always",
@@ -34,12 +35,23 @@ module.exports = {
       2,
       2,
     ],
+    "quotes": [
+      "error",
+      "double",
+    ],
     "require-jsdoc": "off",
     "valid-jsdoc": "off",
     "linebreak-style": "off",
     "operator-linebreak": [
       "error",
       "after",
+    ],
+    "react/jsx-max-props-per-line": [
+      "error",
+      {
+        "maximum": 1,
+        "when": "always",
+      },
     ],
     "react/jsx-first-prop-new-line": [
       "error",
@@ -52,16 +64,6 @@ module.exports = {
     "react/jsx-closing-bracket-location": [
       "error",
       "line-aligned",
-    ],
-    "unused-imports/no-unused-imports": "error",
-    "unused-imports/no-unused-vars": [
-      "warn",
-      {
-        "vars": "all",
-        "varsIgnorePattern": "^_",
-        "args": "after-used",
-        "argsIgnorePattern": "^_"
-      }
     ],
     "react/react-in-jsx-scope": "off",
   },

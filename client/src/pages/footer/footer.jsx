@@ -1,0 +1,121 @@
+import React from "react";
+import styled from "styled-components";
+import "./footer.scss";
+
+const Footer = () => {
+  return (
+    <Box>
+      <h3
+        style={{ color: "#1C9941", textAlign: "center", marginTop: "-50px", marginBottom: "30px" }}
+      >
+        Runtime Hunter: Learn and Enjoy Programming
+      </h3>
+      <Container>
+        <Row>
+          <Column>
+            <LinkFooter href="/aboutUs"> About Us </LinkFooter>
+          </Column>
+          <Column>
+            <LinkFooter href="/contactUs">Contact Us</LinkFooter>
+            <FooterLink href="https://www.linkedin.com/in/alytarik/">Ali Tarik Mirik</FooterLink>
+            <FooterLink href="https://www.linkedin.com/in/mizbah-celik/">Mizbah Celik</FooterLink>
+            <FooterLink href="https://www.linkedin.com/in/mert-ture/">Mert Ture</FooterLink>
+            <FooterLink href="https://www.linkedin.com/in/keremkor/">Kerem Kor</FooterLink>
+          </Column>
+          <Column>
+            <Heading>Social Media</Heading>
+            <FooterLink href="https://www.facebook.com">
+              <i className="fab fa-facebook-f">
+                <span style={{ marginLeft: "10px" }}>Facebook</span>
+              </i>
+            </FooterLink>
+            <FooterLink href="https://www.instagram.com">
+              <i className="fab fa-instagram">
+                <span style={{ marginLeft: "10px" }}>Instagram</span>
+              </i>
+            </FooterLink>
+            <FooterLink href="https://www.twitter.com">
+              <i className="fab fa-twitter">
+                <span style={{ marginLeft: "10px" }}>Twitter</span>
+              </i>
+            </FooterLink>
+          </Column>
+        </Row>
+        <FooterLink
+          style={{
+            marginTop: "20px",
+            textAlign: "center",
+            justifyContent: "center",
+          }}
+        >
+          Copyright © 2021 Runtime Hunter
+        </FooterLink>
+      </Container>
+    </Box>
+  );
+};
+
+export const Box = styled.div`
+  padding: 80px 60px 20px 60px;
+  background: #f2f3f5;
+  position: flex;
+  bottom: 0;
+  width: 100%;
+  margin-top: 20px;
+  @media (max-width: 1000px) {
+    padding: 70px 30px;
+  }
+`;
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 1000px;
+  margin: 0 auto;
+  /* background: red; */
+`;
+
+export const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+`;
+export const Row = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 20px;
+
+  @media (max-width: 1000px) {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+`;
+export const FooterLink = styled.a`
+  color: #4e657e;
+  margin-bottom: 12px;
+  font-size: 14px;
+  text-decoration: none;
+
+  &:hover {
+    color: green;
+    transition: 200ms ease-in;
+  }
+`;
+export const Heading = styled.p`
+  font-size: 18px;
+  color: #4e657e;
+  margin-bottom: 15px;
+  font-weight: bold;
+`;
+export const LinkFooter = styled.a`
+  font-size: 18px;
+  color: #4e657e;
+  margin-bottom: 15px;
+  font-weight: bold;
+  text-decoration: none;
+  &:hover {
+    color: green;
+    transition: 200ms ease-in;
+  }
+`;
+
+export default Footer;
