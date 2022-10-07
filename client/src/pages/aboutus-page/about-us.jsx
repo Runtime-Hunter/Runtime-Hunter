@@ -6,6 +6,7 @@ import bookImg from "../../assets/aboutUs.jpeg";
 import Mert from "../../assets/mert.jpg";
 import MPhoto from "../../assets/mizbah.jpg";
 import Kerem from "../../assets/kerem.jpg";
+import Ali from "../../assets/ali.jpg";
 
 import Footer from "../footer/footer.jsx";
 import Header from "../header/header.jsx";
@@ -90,6 +91,20 @@ function AboutUs() {
           <h2 className="founder_h2"> Founders </h2>
           <div className="founder_contents">
             <div className="row mt-1 ">
+              <div className="col-4 founder_contents_in founder_contents_box">
+                <img
+                  className="founder_img"
+                  src={Ali}
+                  alt="imageFounder"
+                >
+                </img>
+                <p className="founder_name">Ali Tarık Mırık</p>
+                <p className="founder_pos">Software Engineer</p>
+                <p className="founder_info">
+                  Computer Science and Engineering Student mostly interested in Full-Stack
+                  development and Badminton
+                </p>
+              </div>
               <div className="col-4 founder_contents_in founder_contents_box">
                 <img
                   className="founder_img"

@@ -15,7 +15,6 @@ function Landing() {
   const navigate = useNavigate();
 
   const getNotes = async () => {
-    // eslint-disable-next-line no-undef
     await axios.get(`${process.env.REACT_APP_URL}/api/notes`)
       .then(res => {
         console.log(res.data);
@@ -32,7 +31,6 @@ function Landing() {
   }
 
   const getUniversities = async () => {
-    // eslint-disable-next-line no-undef
     await axios.get(`${process.env.REACT_APP_URL}/landingUni`)
       .then(res => {
         console.log(res.data);
