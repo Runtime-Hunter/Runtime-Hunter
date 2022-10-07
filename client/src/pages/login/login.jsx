@@ -38,7 +38,7 @@ function Login() {
       password: data.password,
     };
     axios
-      .post(`${process.env.REACT_APP_URL}/login/${user.email}`, { data: { user: user } })
+      .post(`${process.env.REACT_APP_URL}/api/login/${user.email}`, { data: { user: user } })
       .then((res) => {
         console.log(res);
         if (res.status === 200 && res.data.message) {

@@ -20,7 +20,7 @@ const Header = () => {
 
 
   async function handleSearch() {
-    navigate(`/universitySearch/${searchQuery}`);
+    navigate(`/courseSearch/${searchQuery}`);
   }
 
   return (
@@ -65,7 +65,7 @@ const Header = () => {
             >
               <input
                 type="search"
-                placeholder="Search for universities"
+                placeholder="Search for courses"
                 onChange={(e) => setSearchQuery(e.target.value)}
                 value={searchQuery}
                 data-hj-whitelist="true"

@@ -6,12 +6,13 @@ const dbo = require("../db/conn");
 module.exports = {
 // This section will help you create a new users.
 signup: async (req, response) => {
-    let db_connect = dbo.getDb("courseflow");
+    let db_connect = dbo.getDb("runtime-hunter");
   
     let user = {
       username: req.body.username,
       email: req.body.email,
       password: req.body.password,
+      userType: 1, // player
     };
   
     // hashing time
@@ -30,6 +31,7 @@ signup: async (req, response) => {
           user.password = hash;
   
           // inserting to users collection after hashing
+
           db_connect.collection("users").find({ "email": req.body.email }).toArray()
             .then((result) => {
               if (result.length === 0) {
@@ -50,7 +52,7 @@ signup: async (req, response) => {
 
 // This section will help you get a single users by email
 login: async (req, res) => {
-    let db_connect = dbo.getDb("courseflow");
+    let db_connect = dbo.getDb("runtime-hunter");
     let myquery = {"email": req.params.email};
     let currUser = req.body.data.user;
     db_connect

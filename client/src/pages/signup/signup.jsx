@@ -58,9 +58,8 @@ function Signup() {
     };
 
     axios
-      .post(`${process.env.REACT_APP_URL}/signup`, newUser)
+      .post(`${process.env.REACT_APP_URL}/api/signup`, newUser)
       .then((res) => {
-        console.log(res, "bbb: ", `${process.env.REACT_APP_URL}/signup`);
         if (res.data.message) {
           setErrorMessage(res.data.message);
         } else if (res.status === 200) {

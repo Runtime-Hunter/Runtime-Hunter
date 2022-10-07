@@ -16,7 +16,7 @@ module.exports = {
       if (db)
       {
         
-        _db = db.db("courseflow");
+        _db = db.db("runtime-hunter");
 
         console.log("Successfully connected to MongoDB."); 
       }
