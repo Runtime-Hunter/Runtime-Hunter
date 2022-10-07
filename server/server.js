@@ -4,11 +4,15 @@ const cors = require("cors");
 require("dotenv").config({ path: "./config.env" });
 const port = process.env.PORT || 5000;
 const registrationRouter = require("./routes/registration");
+const levelsRouter = require("./routes/level");
+const coursesRouter = require("./routes/courses");
+
 app.use(cors({origin: "*", methods: "*"}));
 app.use(express.json());
 
 app.use("/", registrationRouter);
-
+app.use("/", levelsRouter);
+app.use("/", coursesRouter);
 const dbo = require("./db/conn");
 
 if (process.env.NODE_ENV === 'production') {

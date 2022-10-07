@@ -1,7 +1,7 @@
 const dbo = require("../db/conn");
 
 module.exports = {
-    getCourses: async(res, req) => {
+    getCourses: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
         db_connect.collection("courses")
             .find({}).sort({"name":1}).toArray()
@@ -12,7 +12,18 @@ module.exports = {
                 throw err;
             });
     },
-    addCourses: async(res, req) => {
+    getCourse: async(req, res) => {
+        let db_connect = dbo.getDb("runtime-hunter");
+        db_connect.collection("courses")
+            .findOne({"_id": req.body.id}).toArray()
+            .then((result) => {
+                res.json(result);
+            })
+            .catch((err) => {
+                throw err;
+            });
+    },
+    addCourse: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
   
         let course = {
@@ -20,7 +31,20 @@ module.exports = {
             concept: req.body.concept,
             description: req.body.description,
             levels: req.body.levels,
+            creatorId: req.body.id,
         };
-        // TO-DO
+
+        db_connect.collection("courses").findOne({"name": req.body.name, "concept": req.body.concept})
+        .then(result => {
+            if (!result) {
+                db_connect.collection("courses").insertOne(course, function(err, response) {
+                    if (err) throw err;
+                    return res.json(response);
+                });
+            }
+            else {
+                return res.json({ message: 'This course has already been created!' });
+            }
+        }) 
     }
 }
