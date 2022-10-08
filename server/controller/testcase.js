@@ -1,12 +1,19 @@
 const dbo = require("../db/conn");
+const ObjectId = require("mongodb").ObjectId;
 
 module.exports = {
     getTestcases: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
         db_connect.collection("courses")
-            .find({"courses._id": req.body.id}).toArray()
+            .findOne({"_id": ObjectId(req.body.id), "levels.questionName": req.body.questionName})
             .then((result) => {
-                res.json(result);
+                var levels = result.levels;
+                for (let i = 0; i < levels.length; i++) {
+                    if (levels[i].questionName === req.body.questionName) {
+                        return res.json(levels[i].testCases);
+                    }
+                }
+               
             })
             .catch((err) => {
                 throw err;
@@ -15,9 +22,11 @@ module.exports = {
     getTestcase: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
         db_connect.collection("courses")
-            .find({"_id": req.body.id, "levels._id":req.body.levelId}).toArray()
+            .findOne({"_id": ObjectId(req.body.id), "levels.testCases._id": ObjectId(req.body.testcaseId)})
             .then((result) => {
-                res.json(result);
+                console.log(res.json(result));
+
+                return res.json(result);
             })
             .catch((err) => {
                 throw err;
@@ -26,33 +35,38 @@ module.exports = {
     addTestcase: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
   
-        let level = {
-            questionName: req.body.questionName,
-            questionDescription: req.body.questionDescription,
-            difficulty: req.body.difficulty,
-            testCases: req.body.testCases,
+        let testcase = {
+            input: req.body.input,
+            output: req.body.output,
+            isPassed: req.body.isPassed,
         };
 
         db_connect.collection("courses")
-            .find({
-                "_id": req.body.id, 
-                "levels.questionName": req.body.questionName
+            .findOne({
+                "_id": ObjectId(req.body.id), 
+                "levels.questionName": req.body.questionName,
+                "levels.testCases.input": req.body.input,                
                 })
-            .toArray()
             .then((result) => {
-                if (result.length === 0) {
-                    db_connect.collection("courses").findOne({"_id": req.body.id}, function (req1, res1) {
-                        const levels = res1.levels.push(level);
-                        db_connect.collection("courses").updateOne({"_id": req.body.id}, {$set: {"levels": levels}}, function (err, response) {
+                if (!result) {
+                    db_connect.collection("courses").findOne({"_id": ObjectId(req.body.id), "levels.questionName": {$eq: req.body.questionName}
+                }, function (req1, res1) {
+
+                        var levels = res1.levels;
+                        for (let i = 0; i < levels.length; i++) {
+                            if (levels[i].questionName === req.body.questionName) {
+                                levels[i].testCases.push(testcase);
+                            }
+                        }
+                        db_connect.collection("courses").updateOne({"_id": ObjectId(req.body.id), "levels.questionName": req.body.questionName}, {$set: {"levels": levels}}, function (err, response) {
                             if (err) throw err;
                             return res.json(response);
                           });
                     });  
                   }
                   else {
-                    return res.json({ message: 'This question has already been created!' });
+                    return res.json({ message: 'This testcase has already been created!' });
                   }
-                  response.json(result);
             })
             .catch((err) => {
                 throw err;

@@ -6,6 +6,7 @@ const port = process.env.PORT || 5000;
 const registrationRouter = require("./routes/registration");
 const levelsRouter = require("./routes/level");
 const coursesRouter = require("./routes/courses");
+const testcasesRouter = require("./routes/testcase");
 
 app.use(cors({origin: "*", methods: "*"}));
 app.use(express.json());
@@ -13,6 +14,8 @@ app.use(express.json());
 app.use("/", registrationRouter);
 app.use("/", levelsRouter);
 app.use("/", coursesRouter);
+app.use("/", testcasesRouter);
+
 const dbo = require("./db/conn");
 
 if (process.env.NODE_ENV === 'production') {

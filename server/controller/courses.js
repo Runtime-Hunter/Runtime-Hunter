@@ -1,4 +1,5 @@
 const dbo = require("../db/conn");
+const ObjectId = require("mongodb").ObjectId;
 
 module.exports = {
     getCourses: async(req, res) => {
@@ -15,7 +16,7 @@ module.exports = {
     getCourse: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
         db_connect.collection("courses")
-            .findOne({"_id": req.body.id}).toArray()
+            .findOne({"_id": ObjectId(req.body.id)}).toArray()
             .then((result) => {
                 res.json(result);
             })

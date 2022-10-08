@@ -31,7 +31,7 @@ module.exports = {
             questionName: req.body.questionName,
             questionDescription: req.body.questionDescription,
             difficulty: req.body.difficulty,
-            testCases: req.body.testCases,
+            testCases: req.body.testCases ? req.body.testCases : [],
         };
 
         db_connect.collection("courses")
@@ -39,9 +39,8 @@ module.exports = {
                 "_id": ObjectId(req.body.id), 
                 "levels.questionName": req.body.questionName
                 })
-            .toArray()
             .then((result) => {
-                if (result.length === 0) {
+                if (!result) {
                     db_connect.collection("courses").findOne({"_id": ObjectId(req.body.id)}, function (req1, res1) {
                         var levels = res1.levels;
                         levels.push(level);
