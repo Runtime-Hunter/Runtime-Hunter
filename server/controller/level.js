@@ -28,16 +28,18 @@ module.exports = {
         let db_connect = dbo.getDb("runtime-hunter");
   
         let level = {
-            questionName: req.body.questionName,
-            questionDescription: req.body.questionDescription,
+            levelId: ObjectId(),
+            levelName: req.body.levelName,
+            levelDescription: req.body.levelDescription,
             difficulty: req.body.difficulty,
             testCases: req.body.testCases ? req.body.testCases : [],
+            submissions: [],
         };
 
         db_connect.collection("courses")
             .find({
                 "_id": ObjectId(req.body.id), 
-                "levels.questionName": req.body.questionName
+                "levels.levelName": req.body.levelName
                 })
             .then((result) => {
                 if (!result) {
@@ -52,7 +54,7 @@ module.exports = {
                     });  
                   }
                   else {
-                    return res.json({ message: 'This question has already been created!' });
+                    return res.json({ message: 'This level has already been created!' });
                   }
             })
             .catch((err) => {

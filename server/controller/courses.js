@@ -16,7 +16,7 @@ module.exports = {
     getCourse: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
         db_connect.collection("courses")
-            .findOne({"_id": ObjectId(req.body.id)}).toArray()
+            .findOne({"_id": ObjectId(req.body.id)})
             .then((result) => {
                 res.json(result);
             })
@@ -32,7 +32,7 @@ module.exports = {
             concept: req.body.concept,
             description: req.body.description,
             levels: req.body.levels,
-            creatorId: req.body.id,
+            creatorId: req.body.creatorId,
         };
 
         db_connect.collection("courses").findOne({"name": req.body.name, "concept": req.body.concept})

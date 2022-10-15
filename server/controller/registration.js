@@ -13,6 +13,7 @@ signup: async (req, response) => {
       email: req.body.email,
       password: req.body.password,
       userType: 1, // player
+      gamesBeingPlayed: [],
     };
   
     // hashing time
