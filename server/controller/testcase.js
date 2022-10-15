@@ -5,7 +5,7 @@ module.exports = {
     getTestcases: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
         db_connect.collection("courses")
-            .findOne({"_id": ObjectId(req.body.id), "levels.levelId": req.body.levelId})
+            .findOne({"_id": ObjectId(req.body.courseId), "levels.levelId": req.body.levelId})
             .then((result) => {
                 var levels = result.levels;
                 for (let i = 0; i < levels.length; i++) {
@@ -22,7 +22,7 @@ module.exports = {
     getTestcase: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
         db_connect.collection("courses")
-            .findOne({"_id": ObjectId(req.body.id), "levels.testCases._id": ObjectId(req.body.testcaseId)})
+            .findOne({"_id": ObjectId(req.body.courseId), "levels.testCases._id": ObjectId(req.body.testcaseId)})
             .then((result) => {
                 console.log(res.json(result));
 
@@ -44,13 +44,13 @@ module.exports = {
 
         db_connect.collection("courses")
             .findOne({
-                "_id": ObjectId(req.body.id), 
+                "_id": ObjectId(req.body.courseId), 
                 "levels.levelId": req.body.levelId,
                 "levels.testCases.input": req.body.input,                
                 })
             .then((result) => {
                 if (!result) {
-                    db_connect.collection("courses").findOne({"_id": ObjectId(req.body.id), "levels.levelId": {$eq: req.body.levelId}
+                    db_connect.collection("courses").findOne({"_id": ObjectId(req.body.courseId), "levels.levelId": {$eq: req.body.levelId}
                 }, function (req1, res1) {
 
                         var levels = res1.levels;
@@ -59,7 +59,7 @@ module.exports = {
                                 levels[i].testCases.push(testcase);
                             }
                         }
-                        db_connect.collection("courses").updateOne({"_id": ObjectId(req.body.id), "levels.levelId": req.body.levelId}, {$set: {"levels": levels}}, function (err, response) {
+                        db_connect.collection("courses").updateOne({"_id": ObjectId(req.body.courseId), "levels.levelId": req.body.levelId}, {$set: {"levels": levels}}, function (err, response) {
                             if (err) throw err;
                             return res.json(response);
                           });

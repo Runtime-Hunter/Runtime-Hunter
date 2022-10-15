@@ -5,7 +5,7 @@ module.exports = {
     getLevels: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
         db_connect.collection("courses")
-            .find({"_id": req.body.id}).toArray()
+            .find({"_id": req.body.courseId}).toArray()
             .then((result) => {
                 res.json(result.levels);
             })
@@ -16,7 +16,7 @@ module.exports = {
     getLevel: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
         db_connect.collection("courses")
-            .findOne({"_id": req.body.id, "levels._id":req.body.levelId})
+            .findOne({"_id": req.body.courseId, "levels._id":req.body.levelId})
             .then((result) => {
                 res.json(result);
             })
@@ -38,16 +38,16 @@ module.exports = {
 
         db_connect.collection("courses")
             .find({
-                "_id": ObjectId(req.body.id), 
+                "_id": ObjectId(req.body.courseId), 
                 "levels.levelName": req.body.levelName
                 })
             .then((result) => {
                 if (!result) {
-                    db_connect.collection("courses").findOne({"_id": ObjectId(req.body.id)}, function (req1, res1) {
+                    db_connect.collection("courses").findOne({"_id": ObjectId(req.body.courseId)}, function (req1, res1) {
                         var levels = res1.levels;
                         levels.push(level);
 
-                        db_connect.collection("courses").updateOne({"_id": ObjectId(req.body.id)}, {$set: {"levels": levels}}, function (err, response) {
+                        db_connect.collection("courses").updateOne({"_id": ObjectId(req.body.courseId)}, {$set: {"levels": levels}}, function (err, response) {
                             if (err) throw err;
                             return res.json(response);
                           });

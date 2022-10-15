@@ -16,7 +16,7 @@ module.exports = {
     getCourse: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
         db_connect.collection("courses")
-            .findOne({"_id": ObjectId(req.body.id)})
+            .findOne({"_id": ObjectId(req.body.courseId)})
             .then((result) => {
                 res.json(result);
             })
