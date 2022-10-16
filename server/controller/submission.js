@@ -59,19 +59,31 @@ module.exports = {
             language: req.body.language,
         };
 
-        db_connect.collection("submissions")
-            .findOne({
-                "_id": ObjectId(req.body.submissionId), 
-                })
-            .then((result) => {
-                db_connect.collection("submissions").insertOne(submission, function(err, response) {
-                    if (err) throw err;
-                    return res.json(response);
-                });    
-            })
-            .catch((err) => {
-                throw err;
-            });
+        db_connect.collection("submissions").insertOne(submission, function(err, response) {
+            if (err) throw err;
+            return res.json(response);
+        });    
         
+        db_connect.collection("users")
+        .findOne({
+            "_id": ObjectId(req.body.userId),
+        })
+        .then(user => {
+            var gamesPlayed = user.gamesBeingPlayed;
+            if (!gamesPlayed.find(req.body.courseId)) {
+                gamesPlayed.push(req.body.courseId);
+
+                db_connect.collection("users")
+                .updateOne({
+                    "_id": ObjectId(req.body.userId),
+                }, {$set: {"gamesBeingPlayed": gamesPlayed}})
+                .then(result => {
+                    return res.json(result);
+                })
+                .catch(err => {
+                    throw err;
+                });
+            }
+        });
     }
 }
