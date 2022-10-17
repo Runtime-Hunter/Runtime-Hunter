@@ -26,16 +26,15 @@ module.exports = {
     },
     addCourse: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
-  
         let course = {
-            name: req.body.name,
+            courseName: req.body.courseName,
             concept: req.body.concept,
             description: req.body.description,
             levels: req.body.levels,
             creatorId: req.body.creatorId,
         };
 
-        db_connect.collection("courses").findOne({"name": req.body.name, "concept": req.body.concept})
+        db_connect.collection("courses").findOne({"courseName": req.body.courseName, "concept": req.body.concept})
         .then(result => {
             if (!result) {
                 db_connect.collection("courses").insertOne(course, function(err, response) {

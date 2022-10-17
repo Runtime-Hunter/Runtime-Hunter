@@ -11,9 +11,10 @@ import Signup from "./pages/signup/signup";
 import ChangePassword from "./pages/change-password/change-password";
 import ErrorPage from "./pages/error-page/error-page";
 import Courses from "./pages/courses/courses";
-
+import CreateCourse from "./pages/create-course/create-course";
 import { useStore } from "./store/store";
 import Homepage from "./pages/homepage/homepage";
+import CreateQuestion from "./pages/create-question/create-question";
 
 function App() {
   const [state] = useStore();
@@ -62,6 +63,14 @@ function App() {
               element={<Courses />}
             />
             <Route
+              path="/createCourse"
+              element={<CreateCourse />}
+            />
+            <Route
+              path="/createQuestion"
+              element={<CreateQuestion />}
+            />
+            <Route
               path="/home"
               element={<Homepage />}
             />
@@ -72,6 +81,10 @@ function App() {
             <Route
               path="*"
               element={<ErrorPage />}
+            />
+            <Route
+              path="/aboutUs"
+              element={<AboutUs />}
             />
           </>
         }

@@ -3,14 +3,14 @@ import PropTypes from "prop-types";
 import { useNavigate } from "react-router";
 import "../course/course.scss";
 
-function Course({ courseCode, name }) {
+function Course({ courseId, concept, courseName }) {
 
   const navigate = useNavigate();
   const goToCourse = (e) => {
-    if(courseCode !== "unknown"){
+    if(courseId !== "unknown"){
       e.preventDefault();
       e.stopPropagation();
-      navigate(`/courses/${courseCode}`)
+      navigate(`/courses/${courseId}`)
     }
   }
 
@@ -23,11 +23,11 @@ function Course({ courseCode, name }) {
             onClick={(e) => goToCourse(e)}
           >
             <a
-              href = {`/courses/${courseCode}`}
+              href = {`/courses/${courseId}`}
               className="text-start course-link"
             >
-              <h4>{`${name.replace("_", " ")}`}</h4>
-              <h5>{`${courseCode.replace("_", " ")}`}</h5>
+              <h4>{`${courseName}`}</h4>
+              <h5>{`${concept}`}</h5>
             </a>
           </div>
         </div>
@@ -39,15 +39,17 @@ function Course({ courseCode, name }) {
 
 
 Course.propTypes = {
-  courseCode:PropTypes.string,
-  name: PropTypes.string,
-  addToFav:PropTypes.func
+  courseId: PropTypes.string,
+  concept:PropTypes.string,
+  courseName: PropTypes.string,
+  edit:PropTypes.func
 }
 
 Course.defaultProps = {
-  courseCode:"unknown",
-  name: "unknown",
+  courseId: "unknown",
+  concept:"unknown",
+  courseName: "unknown",
   // eslint-disable-next-line no-undef
-  addToFav: () => any,
+  edit: () => any,
 }
 export default Course;

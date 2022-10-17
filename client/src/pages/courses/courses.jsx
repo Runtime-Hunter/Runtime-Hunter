@@ -11,13 +11,13 @@ function Courses() {
 
 
   const getCourses = async () => {
-    await axios.get(`${process.env.REACT_APP_URL}/api/courses/all`)
+    await axios.get(`${process.env.REACT_APP_URL}/api/course/all`)
       .then(res => {
-        console.log(res.data);
         const data = res.data;
+        console.log(data);
         let courseList = [];
-        data.forEach(uni => {
-          courseList = courseList.concat(...uni.courses)
+        data.forEach(course => {
+          courseList = courseList.concat(course)
         });
 
         console.log(courseList);
@@ -42,23 +42,24 @@ function Courses() {
 
                 return(
                   <div
-                    key={item.courseCode}
+                    key={item._id}
                     className="row mt-4"
                   >
                     <div
                       className="col-10 col-lg-6"
                     >
                       <Course
-                        courseCode={item.courseCode}
-                        university={item.university}
-                        name={item.courseName}
+                        courseId={item._id}
+                        concept={item.concept}
+                        courseName={item.courseName}
+                        description={item.description}
                       >
                       </Course>
                     </div>
                   </div>
 
                 );
-              }) :<p>No course yet !!!</p>)            :
+              }) :<p>No course yet !!!</p>) :
             <p>Loading...</p>
 
           }

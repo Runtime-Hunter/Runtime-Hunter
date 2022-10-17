@@ -6,7 +6,7 @@ import "./header.css";
 import { useStore } from "../../store/store";
 import { userLogout } from "../../store/userReducer";
 import { useNavigate } from "react-router-dom";
-
+import logo from "../../assets/RHlogo.jpg";
 const Header = () => {
   const [state, dispatch] = useStore();
   const navigate = useNavigate();
@@ -31,6 +31,15 @@ const Header = () => {
       style={{ position: "sticky" }}
     >
       <Container fluid>
+        <Navbar.Brand href="/home">
+          <img
+            className="company-logo"
+            width={"80px"}
+            height={"35px"}
+            src={logo}
+            alt={"logo"}
+          />
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav
@@ -72,35 +81,38 @@ const Header = () => {
                 spellCheck="true"
                 className="search-bar-input"
               />
-             
+
               <button
                 type="submit"
                 className="search-bar-button"
               >
-                  Search
+                Search
               </button>
             </form>
           </div>
-
-          <Nav.Link
-            href="/upload"
-            align="end"
-            className="uploadBtn"
-          >
-            <span
-              className="uploadBtnText"
+          {currentUser.userType == 2 ?
+            <Nav.Link
+              href="/createCourse"
+              align="end"
+              className="uploadBtn"
             >
-              <AiOutlineCloudUpload
-                style={{
-                  height: "25px",
-                  width: "25px",
-                  marginLeft: "-10px",
-                  marginRight: "8px",
-                }}
-              />
-              Upload
-            </span>
-          </Nav.Link>
+              <span
+                className="uploadBtnText"
+              >
+                <AiOutlineCloudUpload
+                  style={{
+                    height: "25px",
+                    width: "25px",
+                    marginLeft: "-2px",
+                    marginRight: "8px",
+                    marginTop: "8px",
+                    marginBottom: "8px",
+                  }}
+                />
+                Create Course
+              </span>
+            </Nav.Link> : undefined
+          }
           <NavDropdown
             title={<span className="profileBackground">{currentUser ? currentUser.username.substring(0, 2).toUpperCase() : "M"}</span>}
             align="end"

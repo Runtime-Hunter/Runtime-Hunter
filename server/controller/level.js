@@ -37,14 +37,14 @@ module.exports = {
         };
 
         db_connect.collection("courses")
-            .find({
-                "_id": ObjectId(req.body.courseId), 
+            .findOne({
+                "_id": ObjectId(req.body.courseId),
                 "levels.levelName": req.body.levelName
                 })
-            .then((result) => {
+            .then(result => {
                 if (!result) {
                     db_connect.collection("courses").findOne({"_id": ObjectId(req.body.courseId)}, function (req1, res1) {
-                        var levels = res1.levels;
+                        var levels = res1.levels ? res1.levels : [];
                         levels.push(level);
 
                         db_connect.collection("courses").updateOne({"_id": ObjectId(req.body.courseId)}, {$set: {"levels": levels}}, function (err, response) {
