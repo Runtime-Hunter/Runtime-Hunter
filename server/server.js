@@ -30,6 +30,7 @@ if (process.env.NODE_ENV === 'production') {
 }
  
 app.listen(port, () => {
+  console.log(`Server will start on port: ${port}`)
   // perform a database connection when server starts
   dbo.connectToServer(function (err) {
     if (err) console.error(err);
