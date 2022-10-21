@@ -15,6 +15,7 @@ import CreateCourse from "./pages/create-course/create-course";
 import { useStore } from "./store/store";
 import Homepage from "./pages/homepage/homepage";
 import CreateQuestion from "./pages/create-question/create-question";
+import Question from "./pages/question-page/question-page";
 
 function App() {
   const [state] = useStore();
@@ -85,6 +86,10 @@ function App() {
             <Route
               path="/aboutUs"
               element={<AboutUs />}
+            />
+            <Route
+              path="/questionPage"
+              element={<Question />}
             />
           </>
         }
