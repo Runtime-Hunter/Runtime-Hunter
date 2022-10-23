@@ -10,7 +10,7 @@ import Header from "../header/header";
 
 import { languageOptions } from "./languageOptions";
 // import { useEffect } from "react";
-import { Button, Col, Row, Container } from "react-bootstrap";
+import { Button, Col, Row, Container, Badge } from "react-bootstrap";
 
 function QuestionPage() {
   const [code, setCode] = useState(
@@ -50,7 +50,13 @@ function QuestionPage() {
             <Button>Compile & Run</Button>
           </Col>
           <Col>
-            <div> Outputs: </div>
+            <h2>
+              <Badge bg="secondary">Output:</Badge>
+            </h2>
+            <textarea
+              style={{ width: "100%", height: "100%" }}
+              disabled
+            />
           </Col>
         </Row>
 
