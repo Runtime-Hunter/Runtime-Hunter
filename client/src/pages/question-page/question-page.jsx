@@ -19,6 +19,50 @@ function QuestionPage() {
   const [lang, setLang] = useState(
     languageOptions[0]
   );
+  const [output, setOutput] = useState("");
+  const [details, setDetails] = useState("");
+
+
+  async function submit() {
+    setOutput("");
+    setDetails("Creating submission...\n");
+    const formData = {
+      "language_id": lang.id,
+      "source_code": code,
+      // "stdin": userInput
+    };
+
+    const response = await fetch(
+      process.env.REACT_APP_RAPID_API_URL,
+      {
+        method: "POST",
+        params: { base64_encoded: "true" },
+        headers: {
+          "x-rapidapi-host": process.env.REACT_APP_RAPID_API_HOST,
+          "x-rapidapi-key": process.env.REACT_APP_RAPID_API_KEY,
+          "content-type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify(formData),
+      }
+    );
+    const jsonResponse = await response.json();
+
+    const submissionResult = await fetch(
+      process.env.REACT_APP_RAPID_API_URL + "/" + jsonResponse.token,
+      {
+        method: "GET",
+        params: { base64_encoded: "true" },
+        headers: {
+          "x-rapidapi-host": process.env.REACT_APP_RAPID_API_HOST,
+          "x-rapidapi-key": process.env.REACT_APP_RAPID_API_KEY,
+        },
+      }
+    );
+    const subResult = await submissionResult.json();
+    setOutput(subResult.stdout)
+    setDetails("Time: " + subResult.time + "\nMemory: " + subResult.memory)
+  }
 
   return (
     <div>
@@ -47,15 +91,24 @@ function QuestionPage() {
                 borderRadius: "4px"
               }}
             />
-            <Button>Compile & Run</Button>
+            <Button onClick={submit}>Compile & Run</Button>
           </Col>
           <Col>
             <h2>
               <Badge bg="secondary">Output:</Badge>
             </h2>
             <textarea
-              style={{ width: "100%", height: "100%" }}
+              style={{ width: "100%", height: "50%", padding: "8px" }}
               disabled
+              value={output}
+            />
+            <h2>
+              <Badge bg="secondary">Details:</Badge>
+            </h2>
+            <textarea
+              style={{ width: "100%", height: "50%", padding: "8px" }}
+              disabled
+              value={details}
             />
           </Col>
         </Row>
