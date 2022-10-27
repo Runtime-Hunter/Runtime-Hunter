@@ -29,7 +29,8 @@ function Courses() {
 
   useEffect(() => {
     getCourses();
-  }, [])
+  }, []);
+  
   return (
     <Layout>
       <div className="row m-4">

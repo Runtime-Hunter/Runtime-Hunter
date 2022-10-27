@@ -4,7 +4,7 @@ import { Navigate } from "react-router";
 
 import "./App.css";
 import AboutUs from "./pages/aboutus-page/about-us";
-
+import CoursePage from "./pages/course-page/course-page";
 import Landing from "./pages/landing/landing";
 import Login from "./pages/login/login";
 import Signup from "./pages/signup/signup";
@@ -15,8 +15,7 @@ import CreateCourse from "./pages/create-course/create-course";
 import { useStore } from "./store/store";
 import Homepage from "./pages/homepage/homepage";
 import CreateQuestion from "./pages/create-question/create-question";
-import Question from "./pages/question-page/question-page";
-
+import QuestionPage from "./pages/question-page/question-page";
 function App() {
   const [state] = useStore();
   const { user: currentUser } = state;
@@ -64,6 +63,10 @@ function App() {
               element={<Courses />}
             />
             <Route
+              path="/course/:courseId"
+              element={<CoursePage />}
+            />
+            <Route
               path="/createCourse"
               element={<CreateCourse />}
             />
@@ -88,8 +91,8 @@ function App() {
               element={<AboutUs />}
             />
             <Route
-              path="/questionPage"
-              element={<Question />}
+              path="/courses/:courseId/:levelId"
+              element={<QuestionPage />}
             />
           </>
         }
