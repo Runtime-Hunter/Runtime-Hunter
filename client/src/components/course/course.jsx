@@ -10,7 +10,7 @@ function Course({ courseId, concept, courseName }) {
     if(courseId !== "unknown"){
       e.preventDefault();
       e.stopPropagation();
-      navigate(`/courses/${courseId}`)
+      navigate(`/course/${courseId}`)
     }
   }
 

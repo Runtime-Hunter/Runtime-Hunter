@@ -7,22 +7,32 @@ import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-python";
 import "prismjs/themes/prism.css"; //Example style, you can use another
 import Header from "../header/header";
-
 import { languageOptions } from "./languageOptions";
-// import { useEffect } from "react";
 import { Button, Col, Row, Container, Badge } from "react-bootstrap";
 
 function QuestionPage() {
-  const [code, setCode] = useState(
-    "function add(a, b) {\n  return a + b;\n}"
-  );
+
   const [lang, setLang] = useState(
     languageOptions[0]
+  );
+  
+  const [code, setCode] = useState(
+    lang ? (localStorage.getItem(`${"0"}_${lang.value}`) ? localStorage.getItem(`${"0"}_${lang.value}`) : lang.default) : languageOptions[0].default
   );
   const [output, setOutput] = useState("");
   const [details, setDetails] = useState("");
 
 
+  function changeLang(language) {
+    setLang(language);
+    setCode(localStorage.getItem(`${"0"}_${language.value}`) ? localStorage.getItem(`${"0"}_${language.value}`) : language.default);
+  }
+
+  function saveCode(code) {
+    setCode(code);
+    localStorage.setItem(`${"0"}_${lang.value}`, code);
+
+  }
   async function submit() {
     setOutput("");
     setDetails("Creating submission...\n");
@@ -64,6 +74,7 @@ function QuestionPage() {
     setDetails("Time: " + subResult.time + "\nMemory: " + subResult.memory)
   }
 
+
   return (
     <div>
       <Header />
@@ -74,11 +85,11 @@ function QuestionPage() {
             xs={6}
           >
             <LanguagesDropdown
-              onSelectChange={setLang}
-            />
+              onSelectChange={changeLang}
+            /> 
             <Editor
               value={code}
-              onValueChange={code => setCode(code)}
+              onValueChange={code => saveCode(code)}
               highlight={code => highlight(code, languages[lang.highlighter])}
               padding={10}
               style={{
@@ -117,6 +128,7 @@ function QuestionPage() {
     </div>
   );
 }
+
 
 // eslint-disable-next-line react/prop-types
 const LanguagesDropdown = ({ onSelectChange }) => {

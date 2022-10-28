@@ -41,8 +41,6 @@ function CreateQuestion() {
       courseId,
     };
 
-    console.log("level: ", level);
-
 
     await axios.post(`${process.env.REACT_APP_URL}/api/level/add`, level).then(res => {
       console.log(res);
