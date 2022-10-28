@@ -42,12 +42,9 @@ function CreateCourse() {
       courseName: data.courseName,
       description: data.description,
       creatorId: currentUser._id,
+      ...(data.levels && { levels: data.levels }),
     };
-    
 
-    if (data.levels) {
-      course.levels = data.levels;
-    }
 
     await axios.post(`${process.env.REACT_APP_URL}/api/course/add`, course).then(res => {
       console.log("res:", res.data.insertedId);
