@@ -31,6 +31,8 @@ module.exports = {
             levelId: ObjectId(),
             levelName: req.body.levelName,
             levelDescription: req.body.levelDescription,
+            codeCpp: req.body.codeCpp,
+            codePy: req.body.codePy,
             difficulty: req.body.difficulty,
             testCases: req.body.testCases ? req.body.testCases : [],
             submissions: [],

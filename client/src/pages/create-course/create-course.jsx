@@ -12,7 +12,6 @@ import "./create-course.css";
 
 const createCourseSchema = z
   .object({
-    concept: z.string().nonempty(),
     courseName: z.string().nonempty(),
     description: z.string().nonempty(),
   });
@@ -38,7 +37,6 @@ function CreateCourse() {
   const onSubmit = async (data) => {
     console.log(data);
     const course = {
-      concept: data.concept,
       courseName: data.courseName,
       description: data.description,
       creatorId: currentUser._id,
@@ -66,19 +64,7 @@ function CreateCourse() {
       <div className="dashedBorder mt-5">
         <div className="uploadContent">
           <div className="card-body">
-            <div className="mt-3 d-flex flex-column">
-              <input
-                {...register("concept")}
-                className="btn-border input-style form-control"
-                placeholder="Course Concept"
-                type="text"
-              >
-              </input>
-              <small className="align-self-start error-text">
-                {errors.concept?.message}
-              </small>
-    
-            </div>
+          
             <div className="mt-3 d-flex flex-column">
               <input
                 {...register("courseName")}

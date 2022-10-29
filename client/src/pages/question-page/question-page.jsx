@@ -31,8 +31,8 @@ function QuestionPage() {
   function saveCode(code) {
     setCode(code);
     localStorage.setItem(`${"0"}_${lang.value}`, code);
-
   }
+  
   async function submit() {
     setOutput("");
     setDetails("Creating submission...\n");
