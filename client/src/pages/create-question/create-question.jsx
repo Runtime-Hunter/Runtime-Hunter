@@ -1,9 +1,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { z } from "zod";
 import Footer from "../footer/footer.jsx";
 import Header from "../header/header.jsx";
@@ -29,14 +30,14 @@ const createQuestionSchema = z
 
 function CreateQuestion() {
 
-  
+  const navigate = useNavigate();
+
   const { state } = useLocation();
   const { courseId } = state || {};
 
-  
   const [editorErrors, setEditorErrors] = useState({ codeCpp: "", codePy: "" })
-  const [codeCpp, setCodeCpp] = useState(languageOptions[0].default);
 
+  const [codeCpp, setCodeCpp] = useState(languageOptions[0].default);
   const [codePy, setCodePy] = useState(languageOptions[1].default);
 
   function saveCodeCpp(code) {
@@ -56,7 +57,6 @@ function CreateQuestion() {
     mode: "all",
   });
 
-
   const onSubmit = async (data) => {
     
     if (codeCpp === languageOptions[0].default || codeCpp === "") {
@@ -67,7 +67,7 @@ function CreateQuestion() {
       setEditorErrors(editorErrors => ({ ...editorErrors, codePy: "Python code should not be empty or default" }));
     }
 
-    if (editorErrors.codeCpp || editorErrors.codePy) {
+    if (editorErrors.codeCpp != "" || editorErrors.codePy != "") {
       return;
     }
 
@@ -84,6 +84,8 @@ function CreateQuestion() {
 
     await axios.post(`${process.env.REACT_APP_URL}/api/level/add`, level).then(res => {
       console.log(res);
+      navigate("/courses");
+
     }).catch(err => console.log(err))
   };
   

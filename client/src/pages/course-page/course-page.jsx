@@ -45,8 +45,6 @@ function CoursePage() {
 
   const fetchCourse = useCallback(
     async () => {
-      console.log("fetching");
-      console.log(courseId);
       if (courseId) {
         await axios
           .get(`${process.env.REACT_APP_URL}/api/course/${courseId}`)

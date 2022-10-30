@@ -24,7 +24,6 @@ function Level({ courseId, levelId, levelName, levelDescription, difficulty }) {
             onClick={(e) => goToLevel(e)}
           >
             <a
-              href = {`/courses/${courseId}/${levelId}`}
               className="text-start course-link"
             >
               <h4>{`${levelName}`}</h4>

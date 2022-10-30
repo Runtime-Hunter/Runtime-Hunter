@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import axios from "axios";
 import Select from "react-select";
 import Editor from "react-simple-code-editor";
 import { highlight, languages } from "prismjs/components/prism-core";
@@ -12,12 +14,17 @@ import { Button, Col, Row, Container, Badge } from "react-bootstrap";
 
 function QuestionPage() {
 
+  const navigate = useNavigate();
+
+  const { courseId, levelId } = useParams();
+
   const [lang, setLang] = useState(
     languageOptions[0]
   );
-  
+
+  const [question, setQuestion] = useState();
   const [code, setCode] = useState(
-    lang ? (localStorage.getItem(`${"0"}_${lang.value}`) ? localStorage.getItem(`${"0"}_${lang.value}`) : lang.default) : languageOptions[0].default
+    lang ? (localStorage.getItem(`${"0"}_${lang.value}`) ? localStorage.getItem(`${"0"}_${lang.value}`) : (question ? question.codeCpp : lang.default)) : languageOptions[0].default
   );
   const [output, setOutput] = useState("");
   const [details, setDetails] = useState("");
@@ -25,13 +32,45 @@ function QuestionPage() {
 
   function changeLang(language) {
     setLang(language);
-    setCode(localStorage.getItem(`${"0"}_${language.value}`) ? localStorage.getItem(`${"0"}_${language.value}`) : language.default);
+    setCode(localStorage.getItem(`${"0"}_${language.value}`) ? localStorage.getItem(`${"0"}_${language.value}`) : (language.value === "python" ? question.codePy : question.codeCpp));
   }
 
   function saveCode(code) {
     setCode(code);
     localStorage.setItem(`${"0"}_${lang.value}`, code);
   }
+
+  const fetchLevel = useCallback(
+    async () => {
+      if (courseId && levelId) {
+        await axios
+          .get(`${process.env.REACT_APP_URL}/api/level/${courseId}/${levelId}`)
+          .then((res) => {
+            if(res.data !== null){
+              console.log(res.data);
+              setQuestion(res.data);
+            }
+            else{
+              navigate("/error");
+            }
+          })
+          .catch((err) => {
+            console.log("Error:", err);
+          })
+      }
+    },
+    [courseId, levelId],
+  )
+
+  useEffect(() => {
+    fetchLevel();
+  }, [levelId])
+
+  useEffect(() => {
+    if (question) {
+      setCode((lang.value == "python") ? question.codePy : question.codeCpp)
+    }
+  }, [question])
   
   async function submit() {
     setOutput("");
@@ -39,7 +78,6 @@ function QuestionPage() {
     const formData = {
       "language_id": lang.id,
       "source_code": code,
-      // "stdin": userInput
     };
 
     const response = await fetch(
@@ -84,6 +122,16 @@ function QuestionPage() {
             style={{ height: "600px" }}
             xs={6}
           >
+            <h2>
+              <Badge bg="secondary">Question</Badge>
+            </h2>
+            <textarea
+              style={{ width: "100%", height: "50%", padding: "8px" }}
+              disabled
+              value={question ? question.levelDescription : ""}
+            />
+          </Col>
+          <Col>
             <LanguagesDropdown
               onSelectChange={changeLang}
             /> 
@@ -93,7 +141,7 @@ function QuestionPage() {
               highlight={code => highlight(code, languages[lang.highlighter])}
               padding={10}
               style={{
-                height: "100%",
+                height: "50%",
                 fontFamily: "'Fira code', 'Fira Mono', monospace",
                 fontSize: 12,
                 borderColor: "grey",
@@ -102,17 +150,12 @@ function QuestionPage() {
                 borderRadius: "4px"
               }}
             />
-            <Button onClick={submit}>Compile & Run</Button>
-          </Col>
-          <Col>
-            <h2>
-              <Badge bg="secondary">Output:</Badge>
-            </h2>
-            <textarea
-              style={{ width: "100%", height: "50%", padding: "8px" }}
-              disabled
-              value={output}
-            />
+            <Button
+              
+              style={{ marginTop: "10px", display: "flex", marginLeft: "auto"  }}
+              onClick={submit}
+            >Compile & Run
+            </Button>
             <h2>
               <Badge bg="secondary">Details:</Badge>
             </h2>
@@ -133,7 +176,7 @@ function QuestionPage() {
 // eslint-disable-next-line react/prop-types
 const LanguagesDropdown = ({ onSelectChange }) => {
   return (
-    <div style={{ width: "150px" }}>
+    <div style={{ width: "150px", paddingBottom: "13px" }}>
       <Select
         isSearchable={false}
         placeholder={"Select Language"}
