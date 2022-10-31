@@ -4,12 +4,13 @@ const ObjectId = require("mongodb").ObjectId;
 module.exports = {
     getTestcases: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
+
         db_connect.collection("courses")
-            .findOne({"_id": ObjectId(req.body.courseId), "levels.levelId": req.body.levelId})
+            .findOne({"_id": ObjectId(req.params.courseId), "levels.levelId": ObjectId(req.params.levelId)})
             .then((result) => {
                 var levels = result.levels;
                 for (let i = 0; i < levels.length; i++) {
-                    if (levels[i].levelId === req.body.levelId) {
+                    if (levels[i].levelId.toString() === req.params.levelId) {
                         return res.json(levels[i].testCases);
                     }
                 }
@@ -39,27 +40,26 @@ module.exports = {
             testcaseId: ObjectId(),
             input: req.body.input,
             output: req.body.output,
-            isPassed: req.body.isPassed,
         };
 
         db_connect.collection("courses")
             .findOne({
-                "_id": ObjectId(req.body.courseId), 
-                "levels.levelId": req.body.levelId,
+                "_id": ObjectId(req.params.courseId), 
+                "levels.levelId": req.params.levelId,
                 "levels.testCases.input": req.body.input,                
                 })
             .then((result) => {
                 if (!result) {
-                    db_connect.collection("courses").findOne({"_id": ObjectId(req.body.courseId), "levels.levelId": {$eq: req.body.levelId}
+                    db_connect.collection("courses").findOne({"_id": ObjectId(req.params.courseId), "levels.levelId": {$eq: ObjectId(req.params.levelId)}
                 }, function (req1, res1) {
-
+                        console.log(res1);
                         var levels = res1.levels;
                         for (let i = 0; i < levels.length; i++) {
-                            if (levels[i].levelId === req.body.levelId) {
+                            if (levels[i].levelId.toString() == req.params.levelId) {
                                 levels[i].testCases.push(testcase);
                             }
                         }
-                        db_connect.collection("courses").updateOne({"_id": ObjectId(req.body.courseId), "levels.levelId": req.body.levelId}, {$set: {"levels": levels}}, function (err, response) {
+                        db_connect.collection("courses").updateOne({"_id": ObjectId(req.params.courseId), "levels.levelId": ObjectId(req.params.levelId)}, {$set: {"levels": levels}}, function (err, response) {
                             if (err) throw err;
                             return res.json(response);
                           });

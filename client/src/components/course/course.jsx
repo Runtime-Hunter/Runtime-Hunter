@@ -23,7 +23,6 @@ function Course({ courseId, concept, courseName }) {
             onClick={(e) => goToCourse(e)}
           >
             <a
-              href = {`/courses/${courseId}`}
               className="text-start course-link"
             >
               <h4>{`${courseName}`}</h4>

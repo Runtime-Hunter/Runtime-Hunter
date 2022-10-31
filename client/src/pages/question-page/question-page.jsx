@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Select from "react-select";
 import Editor from "react-simple-code-editor";
@@ -28,7 +28,7 @@ function QuestionPage() {
   );
   const [output, setOutput] = useState("");
   const [details, setDetails] = useState("");
-
+  const [testcaseResults, setTestcaseResults] = useState([]);
 
   function changeLang(language) {
     setLang(language);
@@ -71,45 +71,74 @@ function QuestionPage() {
       setCode((lang.value == "python") ? question.codePy : question.codeCpp)
     }
   }, [question])
+
+ 
+
+  async function getTestcases() {
+
+    const testcases = await axios.get(`${process.env.REACT_APP_URL}/api/testcase/${courseId}/${levelId}`,).then(res => {
+      if (res.data !== null) {
+        return res.data;
+      }
+      else {
+        navigate("/error");
+      }
+    }).catch(err => console.log(err))
+
+    return testcases;
+  }
   
   async function submit() {
     setOutput("");
     setDetails("Creating submission...\n");
-    const formData = {
-      "language_id": lang.id,
-      "source_code": code,
-    };
 
-    const response = await fetch(
-      process.env.REACT_APP_RAPID_API_URL,
-      {
-        method: "POST",
-        params: { base64_encoded: "true" },
-        headers: {
-          "x-rapidapi-host": process.env.REACT_APP_RAPID_API_HOST,
-          "x-rapidapi-key": process.env.REACT_APP_RAPID_API_KEY,
-          "content-type": "application/json",
-          accept: "application/json",
-        },
-        body: JSON.stringify(formData),
-      }
-    );
-    const jsonResponse = await response.json();
+    await getTestcases().then(async (testcases) => {
+      for (let i = 0; i < testcases.length; i++) {
+        console.log(testcases[i].input);
+        const formData = {
+          "language_id": lang.id,
+          "source_code": code,
+          "stdin": testcases[i].input,
+        };
 
-    const submissionResult = await fetch(
-      process.env.REACT_APP_RAPID_API_URL + "/" + jsonResponse.token,
-      {
-        method: "GET",
-        params: { base64_encoded: "true" },
-        headers: {
-          "x-rapidapi-host": process.env.REACT_APP_RAPID_API_HOST,
-          "x-rapidapi-key": process.env.REACT_APP_RAPID_API_KEY,
-        },
+        const response = await fetch(
+          process.env.REACT_APP_RAPID_API_URL,
+          {
+            method: "POST",
+            params: { base64_encoded: "true" },
+            headers: {
+              "x-rapidapi-host": process.env.REACT_APP_RAPID_API_HOST,
+              "x-rapidapi-key": process.env.REACT_APP_RAPID_API_KEY,
+              "content-type": "application/json",
+              accept: "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+        const jsonResponse = await response.json();
+
+        const submissionResult = await fetch(
+          process.env.REACT_APP_RAPID_API_URL + "/" + jsonResponse.token,
+          {
+            method: "GET",
+            params: { base64_encoded: "true", fields: "*" },
+            headers: {
+              "x-rapidapi-host": process.env.REACT_APP_RAPID_API_HOST,
+              "x-rapidapi-key": process.env.REACT_APP_RAPID_API_KEY,
+            },
+          }
+        );
+    
+        const subResult = await submissionResult.json();
+        console.log(subResult);
+        setDetails(subResult.stdout);
+        const testcaseResult = (parseInt(subResult.stdout) === parseInt(testcases[i].output) ? true : false);
+        setTestcaseResults(testcaseResults => testcaseResults.concat(testcaseResult))
       }
-    );
-    const subResult = await submissionResult.json();
-    setOutput(subResult.stdout)
-    setDetails("Time: " + subResult.time + "\nMemory: " + subResult.memory)
+      console.log("Testcase res: ", testcaseResults);
+    }).catch(err => {
+      console.log("Error: ", err);
+    })
   }
 
 
@@ -164,7 +193,11 @@ function QuestionPage() {
               disabled
               value={details}
             />
+            
           </Col>
+          {(testcaseResults && testcaseResults.length > 0) ? (testcaseResults.map((result) => {
+            <p> Testcase {testcaseResults.length} is passed</p>
+          })) : "aaa"}
         </Row>
 
       </Container>

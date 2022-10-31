@@ -16,6 +16,7 @@ import { useStore } from "./store/store";
 import Homepage from "./pages/homepage/homepage";
 import CreateQuestion from "./pages/create-question/create-question";
 import QuestionPage from "./pages/question-page/question-page";
+import CreateTestcase from "./pages/create-testcase/create-testcase";
 function App() {
   const [state] = useStore();
   const { user: currentUser } = state;
@@ -67,14 +68,6 @@ function App() {
               element={<CoursePage />}
             />
             <Route
-              path="/createCourse"
-              element={<CreateCourse />}
-            />
-            <Route
-              path="/createQuestion"
-              element={<CreateQuestion />}
-            />
-            <Route
               path="/home"
               element={<Homepage />}
             />
@@ -94,6 +87,21 @@ function App() {
               path="/courses/:courseId/:levelId"
               element={<QuestionPage />}
             />
+            {currentUser.userType == 2 &&
+          <>
+            <Route
+              path="/createCourse"
+              element={<CreateCourse />}
+            />
+            <Route
+              path="/:courseId/createQuestion"
+              element={<CreateQuestion />}
+            />
+            <Route
+              path="/courses/:courseId/:levelId/testcase"
+              element={<CreateTestcase />}
+            />
+          </>}
           </>
         }
       </Routes>

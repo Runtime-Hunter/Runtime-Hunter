@@ -14,7 +14,6 @@ function Courses() {
     await axios.get(`${process.env.REACT_APP_URL}/api/course/all`)
       .then(res => {
         const data = res.data;
-        console.log(data);
         let courseList = [];
         data.forEach(course => {
           courseList = courseList.concat(course)
@@ -51,7 +50,6 @@ function Courses() {
                     >
                       <Course
                         courseId={item._id}
-                        concept={item.concept}
                         courseName={item.courseName}
                         description={item.description}
                       >

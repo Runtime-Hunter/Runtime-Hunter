@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router";
 import { z } from "zod";
 import Footer from "../footer/footer.jsx";
@@ -31,9 +31,7 @@ const createQuestionSchema = z
 function CreateQuestion() {
 
   const navigate = useNavigate();
-
-  const { state } = useLocation();
-  const { courseId } = state || {};
+  const { courseId } = useParams();
 
   const [editorErrors, setEditorErrors] = useState({ codeCpp: "", codePy: "" })
 
