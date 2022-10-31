@@ -1,13 +1,23 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { z } from "zod";
 import Footer from "../footer/footer.jsx";
 import Header from "../header/header.jsx";
+import Editor from "react-simple-code-editor";
+import { highlight, languages } from "prismjs/components/prism-core";
+import { languageOptions } from "./../question-page/languageOptions";
+import "prismjs/components/prism-clike";
+import "prismjs/components/prism-javascript";
+import "prismjs/components/prism-python";
+import "prismjs/themes/prism.css"; //Example style, you can use another
 import "./create-question.css";
+import { Col, Row } from "react-bootstrap";
+
 
 const createQuestionSchema = z
   .object({
@@ -17,9 +27,26 @@ const createQuestionSchema = z
   });
 
 
+
 function CreateQuestion() {
+
+  const navigate = useNavigate();
+
   const { state } = useLocation();
   const { courseId } = state || {};
+
+  const [editorErrors, setEditorErrors] = useState({ codeCpp: "", codePy: "" })
+
+  const [codeCpp, setCodeCpp] = useState(languageOptions[0].default);
+  const [codePy, setCodePy] = useState(languageOptions[1].default);
+
+  function saveCodeCpp(code) {
+    setCodeCpp(code);
+  }
+
+  function saveCodePy(code) {
+    setCodePy(code);
+  }
 
   const {
     register,
@@ -30,8 +57,19 @@ function CreateQuestion() {
     mode: "all",
   });
 
-
   const onSubmit = async (data) => {
+    
+    if (codeCpp === languageOptions[0].default || codeCpp === "") {
+      setEditorErrors(editorErrors => ({ ...editorErrors, codeCpp: "Cpp code should not be empty or default" }));
+    }
+
+    if (codePy === languageOptions[1].default || codePy === "") {
+      setEditorErrors(editorErrors => ({ ...editorErrors, codePy: "Python code should not be empty or default" }));
+    }
+
+    if (editorErrors.codeCpp != "" || editorErrors.codePy != "") {
+      return;
+    }
 
     const level = {
       levelName: data.levelName,
@@ -39,11 +77,15 @@ function CreateQuestion() {
       difficulty: data.difficulty,
       testCases: data.testCases,
       courseId,
+      inputCpp: codeCpp,
+      inputPy: codePy,
     };
 
 
     await axios.post(`${process.env.REACT_APP_URL}/api/level/add`, level).then(res => {
       console.log(res);
+      navigate("/courses");
+
     }).catch(err => console.log(err))
   };
   
@@ -95,8 +137,73 @@ function CreateQuestion() {
               <small className="align-self-start error-text">
                 {errors.difficulty?.message}
               </small>
-            </div>                 
-        
+            </div>  
+   
+            <Row>
+              <label
+                htmlFor="difficulty"
+                style={{ paddingTop: "30px" }}
+              >Input Code:
+              </label>
+
+              <Col
+                style={{ height: "600px", padding: "20px" }}
+                xs={6}
+
+              >
+                <small className="align-self-start error-text">
+                  {editorErrors.codeCpp ?? "xxx"}
+                </small>
+                <div>
+                  C++
+                </div>
+                <Editor
+                  value={codeCpp}
+                  onValueChange={code => saveCodeCpp(code)}
+                  highlight={code => highlight(code, languages[languageOptions[0].highlighter])}
+                  padding={10}
+                  style={{
+                    height: "100%",
+                    fontFamily: "'Fira code', 'Fira Mono', monospace",
+                    fontSize: 12,
+                    borderColor: "grey",
+                    borderWidth: "0.5px",
+                    borderStyle: "solid",
+                    borderRadius: "4px"
+                  }}
+                />
+              </Col>            
+
+              <Col
+                style={{ height: "600px", padding: "20px" }}
+                xs={6}
+              >
+                <small className="align-self-start error-text">
+                  {editorErrors.codePy ? editorErrors.codePy : ""}
+                </small>
+                <div>
+                  Python
+                </div>
+
+                <Editor
+                  {...register("codePy")}
+
+                  value={codePy}
+                  onValueChange={code => saveCodePy(code)}
+                  highlight={codePy => highlight(codePy, languages[languageOptions[1].highlighter])}
+                  padding={10}
+                  style={{
+                    height: "100%",
+                    fontFamily: "'Fira code', 'Fira Mono', monospace",
+                    fontSize: 12,
+                    borderColor: "grey",
+                    borderWidth: "0.5px",
+                    borderStyle: "solid",
+                    borderRadius: "4px"
+                  }}
+                />
+              </Col>         
+            </Row>
             <button
               className="btn col-2 uploadBtn"
               // eslint-disable-next-line react/no-unknown-property
