@@ -1,16 +1,16 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import Select from "react-select";
-import Editor from "react-simple-code-editor";
-import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
+import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-python";
 import "prismjs/themes/prism.css"; //Example style, you can use another
+import React, { useCallback, useEffect, useState } from "react";
+import { Badge, Button, Col, Container, Row } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
+import Select from "react-select";
+import Editor from "react-simple-code-editor";
 import Header from "../header/header";
 import { languageOptions } from "./languageOptions";
-import { Button, Col, Row, Container, Badge } from "react-bootstrap";
 
 function QuestionPage() {
 
@@ -133,7 +133,7 @@ function QuestionPage() {
         console.log(subResult);
         setDetails(subResult.stdout);
         const testcaseResult = (parseInt(subResult.stdout) === parseInt(testcases[i].output) ? true : false);
-        setTestcaseResults(testcaseResults => testcaseResults.concat(testcaseResult))
+        setTestcaseResults([...testcaseResults, testcaseResult])
       }
       console.log("Testcase res: ", testcaseResults);
     }).catch(err => {
@@ -195,8 +195,13 @@ function QuestionPage() {
             />
             
           </Col>
-          {(testcaseResults && testcaseResults.length > 0) ? (testcaseResults.map((result) => {
-            <p> Testcase {testcaseResults.length} is passed</p>
+          {(testcaseResults && testcaseResults.length > 0) ? (testcaseResults.map((result, index) => {
+            return(
+              <p
+                key={index}
+              > Testcase {testcaseResults.length} is passed
+              </p>
+            )
           })) : "aaa"}
         </Row>
 
