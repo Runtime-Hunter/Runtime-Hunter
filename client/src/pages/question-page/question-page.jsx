@@ -99,13 +99,20 @@ function QuestionPage() {
           "language_id": lang.id,
           "source_code": code,
           "stdin": testcases[i].input,
+          // "expected_output": testcases[i].output,
         };
+        // const formData = {
+        //   "language_id": lang.id,
+        //   "source_code": encode(code),
+        //   "stdin": encode(testcases[i].input),
+        //   "expected_output": encode(testcases[i].output),
+        // };
 
         const response = await fetch(
           process.env.REACT_APP_RAPID_API_URL,
           {
             method: "POST",
-            params: { base64_encoded: "true" },
+            params: { base64_encoded: "true", fields: "*" },
             headers: {
               "x-rapidapi-host": process.env.REACT_APP_RAPID_API_HOST,
               "x-rapidapi-key": process.env.REACT_APP_RAPID_API_KEY,
@@ -131,10 +138,12 @@ function QuestionPage() {
     
         const subResult = await submissionResult.json();
         console.log(subResult);
-        setDetails(subResult.stdout);
         const testcaseResult = (parseInt(subResult.stdout) === parseInt(testcases[i].output) ? true : false);
         setTestcaseResults([...testcaseResults, testcaseResult])
+        const status = testcaseResult ? "Passed" : "Failed" 
+        setDetails((oldDetail) => oldDetail + "\n" + "Input: " + testcases[i].input + " - Output: " + subResult.stdout + " => Result: " + status + "\n");
       }
+      setDetails((oldDetail) => oldDetail.replace("Creating submission...", "All tests finished") );
       console.log("Testcase res: ", testcaseResults);
     }).catch(err => {
       console.log("Error: ", err);
