@@ -3,9 +3,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { AiOutlineHeart } from "react-icons/ai";
 import { FcLike } from "react-icons/fc";
 import { useNavigate, useParams } from "react-router";
+import Level from "../../components/level/level.jsx";
 import { useStore } from "../../store/store.js";
 import { userLogin } from "../../store/userReducer";
-import Level from "../../components/level/level.jsx";
 import "./course-page.css";
 
 const { default: Layout } = require("../../components/layout/layout");
@@ -106,6 +106,10 @@ function CoursePage() {
       })
   }
 
+  const addLevel = () => {
+    navigate("/createQuestion", { state: { courseId } });
+  }
+
 
   // useEffect(() => {
   //   if (course) {
@@ -174,10 +178,18 @@ function CoursePage() {
 
               </div>
               <div
-                className="col-9 align-self-center"
+                className="col-7 align-self-center"
               >
                 <h1 className="text-center">{course ? (course.courseName).replace("_", " ") : ""}
                 </h1>
+              </div>
+              <div
+                className="col-2 align-self-center"
+              >
+                <button
+                  onClick={addLevel}
+                >Add level
+                </button>
               </div>
             </div>
 
