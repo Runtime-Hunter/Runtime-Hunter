@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { AiOutlineHeart } from "react-icons/ai";
 import { FcLike } from "react-icons/fc";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import Level from "../../components/level/level.jsx";
 import { useStore } from "../../store/store.js";
 import { userLogin } from "../../store/userReducer";
@@ -105,7 +105,7 @@ function CoursePage() {
   }
 
   const addLevel = () => {
-    navigate("/createQuestion", { state: { courseId } });
+    navigate(`/${courseId}/createQuestion`);
   }
 
 
@@ -181,14 +181,18 @@ function CoursePage() {
                 <h1 className="text-center">{course ? (course.courseName).replace("_", " ") : ""}
                 </h1>
               </div>
+              {course.creatorId == currentUser._id &&
+
               <div
                 className="col-2 align-self-center"
               >
                 <button
                   onClick={addLevel}
+                  className="search-bar-button"
                 >Add level
                 </button>
               </div>
+              }
             </div>
 
             <div className="row mt-4">

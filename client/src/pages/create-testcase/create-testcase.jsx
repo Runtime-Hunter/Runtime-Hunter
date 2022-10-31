@@ -4,29 +4,29 @@ import axios from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { useParams } from "react-router-dom";
 import { z } from "zod";
 import { useStore } from "../../store/store";
 import Footer from "../footer/footer.jsx";
 import Header from "../header/header.jsx";
-import "./create-course.css";
+import "./create-testcase.css";
 
-const createCourseSchema = z
+const createTestcaseSchema = z
   .object({
-    courseName: z.string().nonempty(),
-    description: z.string().nonempty(),
+    input: z.string().nonempty(),
+    output: z.string().nonempty(),
   });
 
 
-function CreateCourse() {
+function CreateTestcase() {
   
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(createCourseSchema),
+    resolver: zodResolver(createTestcaseSchema),
     mode: "all",
   });
 
@@ -34,58 +34,49 @@ function CreateCourse() {
   const [state] = useStore();
   const { user: currentUser } = state;
 
+  const { courseId, levelId } = useParams();
+
   const onSubmit = async (data) => {
-    console.log(data);
-    const course = {
-      courseName: data.courseName,
-      description: data.description,
-      creatorId: currentUser._id,
-      ...(data.levels && { levels: data.levels }),
+    const testcase = {
+      input: data.input,
+      output: data.output,
     };
 
 
-    await axios.post(`${process.env.REACT_APP_URL}/api/course/add`, course).then(res => {
-      navigate(`/${res.data.insertedId}/createQuestion`);
+    await axios.post(`${process.env.REACT_APP_URL}/api/testcase/${courseId}/${levelId}/add`, testcase).then(res => {
+      navigate(`/courses/${courseId}/${levelId}`);
     }).catch(err => console.log(err))
   };
   
   return (
     <div>
       <Header/>
-      <div className="upload-info row align-items-center">
-        <div className="upload-headInfo">
-          <h2 className="">Create  
-            <span className="appearContentColor appearContentFont"> programming games
-            </span> to help other programmers
-          </h2>
-        </div>
-      </div>
+      
       <div className="dashedBorder mt-5">
         <div className="uploadContent">
           <div className="card-body">
-          
             <div className="mt-3 d-flex flex-column">
               <input
-                {...register("courseName")}
+                {...register("input")}
                 className="btn-border input-style form-control"
-                placeholder="Course Name"
+                placeholder="Input"
                 type="text"
               >
               </input>
               <small className="align-self-start error-text">
-                {errors.courseName?.message}
+                {errors.input?.message}
               </small>
             </div>
             <div className="mt-3 d-flex flex-column">
               <input
-                {...register("description")}
+                {...register("output")}
                 className="btn-border input-style form-control"
-                placeholder="Description"
+                placeholder="Output"
                 type="text"
               >
               </input>
               <small className="align-self-start error-text">
-                {errors.description?.message}
+                {errors.output?.message}
               </small>
             </div> 
         
@@ -96,7 +87,7 @@ function CreateCourse() {
               onClick={handleSubmit(onSubmit)}
             >
               <span className="uploadBtnText"> 
-                Create Course and Skip to Questions
+                Create Testcase
               </span>
             </button> 
           </div>
@@ -108,4 +99,4 @@ function CreateCourse() {
   );
 }
 
-export default CreateCourse;
+export default CreateTestcase;

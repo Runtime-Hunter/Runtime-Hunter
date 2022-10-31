@@ -15,7 +15,7 @@ module.exports = {
     },
     getLevel: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
-        console.log("course: ",req.params.courseId, "levels", req.params.levelId);
+        
         db_connect.collection("courses")
             .findOne({"_id": ObjectId(req.params.courseId), "levels.levelId": ObjectId(req.params.levelId)})
             .then((result) => {
@@ -33,7 +33,7 @@ module.exports = {
     },
     addLevel: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
-        console.log(req.body);
+
         let level = {
             levelId: ObjectId(),
             levelName: req.body.levelName,
