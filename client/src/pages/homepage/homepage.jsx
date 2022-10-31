@@ -1,26 +1,60 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Course from "../../components/course/course.jsx";
 import Layout from "../../components/layout/layout.jsx";
 import { useStore } from "../../store/store";
+import axios from "axios";
+import { useNavigate } from "react-router";
 import "../homepage/homepage.css";
 
 
 
 function Homepage() {
   const [state] = useStore();
+
+  const navigate = useNavigate();
+
   const { user: currentUser } = state;
 
   const [list, setList] = useState();
 
+  const fetchCreatedCourses = useCallback(
+    async () => {
+      if (currentUser) {
+        const userId = currentUser._id;
+        await axios
+          .get(`${process.env.REACT_APP_URL}/api/user/course/${userId}`)
+          .then((res) => {
+            if(res.data !== null){
+              console.log(res.data);
+              setList(res.data);
+            }
+            else{
+              console.log(res);
+              navigate("/error");
+            }
+          })
+          .catch((err) => {
+            console.log("Error:", err);
+          })
+      }
+    },
+    [currentUser],
+  )
 
   useEffect(() => {
-    let favCoursesList = currentUser.favouriteCourses;
-
-    if (favCoursesList) {
-      setList(favCoursesList);
+    if (currentUser.userType == 2) {
+      fetchCreatedCourses();
     }
+    else {
+      let favCoursesList = currentUser.favouriteCourses;
 
-  }, []);
+      if (favCoursesList) {
+        setList(favCoursesList);
+      }
+  
+    }
+   
+  }, [currentUser]);
 
 
   return (
@@ -35,14 +69,14 @@ function Homepage() {
 
                   return(
                     <div
-                      key={item.courseCode}
+                      key={item._id}
                       className="row mb-3"
                     >
                       <div className="col-10 col-lg-6">
                         <Course
-                          courseCode={item.courseCode}
-                          university={item.university}
-                          name={item.courseName}
+                          courseId={item._id}
+                          courseName={item.courseName}
+                          description={item.description}
                         >
                         </Course>
                       </div>

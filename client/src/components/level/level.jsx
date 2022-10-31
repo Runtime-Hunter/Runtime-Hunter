@@ -8,32 +8,50 @@ function Level({ courseId, levelId, levelName, levelDescription, difficulty }) {
 
   const navigate = useNavigate();
   const goToLevel = (e) => {
-    if(levelId !== "unknown"){
+    if(levelId !== "unknown" & courseId !== "unknown"){
       e.preventDefault();
       e.stopPropagation();
       navigate(`/courses/${courseId}/${levelId}`)
     }
   }
+  const addTestcase = (e) => {
+    if(levelId !== "unknown" & courseId !== "unknown"){
+      e.preventDefault();
+      e.stopPropagation();
+      navigate(`/courses/${courseId}/${levelId}/testcase`)
+    }
+  }
 
   return (
     <div>
-      <button className="col-12 mb-1 btn btn-block btn-outline-success course-button">
+      <div className="col-12 mb-1 btn btn-block btn-outline-success course-button">
         <div className="row justify-content-between">
           <div
             className="col-8 courseName"
-            onClick={(e) => goToLevel(e)}
           >
+           
             <a
-              href = {`/courses/${courseId}/${levelId}`}
               className="text-start course-link"
+              onClick={(e) => goToLevel(e)}
             >
               <h4>{`${levelName}`}</h4>
               <h5>{`${levelDescription}`}</h5>
               <h5>{`${difficulty}`}</h5>
             </a>
+            
+          </div>
+          <div
+            className="col-2 align-self-center"
+          >
+            <button
+              className="search-bar-button"
+              onClick={(e) => addTestcase(e)}
+            >
+              Add Testcase
+            </button>
           </div>
         </div>
-      </button>
+      </div>
     </div>
   );
 }

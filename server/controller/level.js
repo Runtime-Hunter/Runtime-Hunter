@@ -5,7 +5,7 @@ module.exports = {
     getLevels: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
         db_connect.collection("courses")
-            .find({"_id": req.body.courseId}).toArray()
+            .find({"_id": req.params.courseId}).toArray()
             .then((result) => {
                 res.json(result.levels);
             })
@@ -15,10 +15,17 @@ module.exports = {
     },
     getLevel: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
+        
         db_connect.collection("courses")
-            .findOne({"_id": req.body.courseId, "levels._id":req.body.levelId})
+            .findOne({"_id": ObjectId(req.params.courseId), "levels.levelId": ObjectId(req.params.levelId)})
             .then((result) => {
-                res.json(result);
+                var level;
+                for (let i = 0; i < result.levels.length; i++) {
+                    if ((result.levels[i].levelId).toString() == req.params.levelId) {
+                        level = result.levels[i];
+                    }
+                }
+                res.json(level);
             })
             .catch((err) => {
                 throw err;
@@ -26,11 +33,13 @@ module.exports = {
     },
     addLevel: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
-  
+
         let level = {
             levelId: ObjectId(),
             levelName: req.body.levelName,
             levelDescription: req.body.levelDescription,
+            codeCpp: req.body.inputCpp,
+            codePy: req.body.inputPy,
             difficulty: req.body.difficulty,
             testCases: req.body.testCases ? req.body.testCases : [],
             submissions: [],

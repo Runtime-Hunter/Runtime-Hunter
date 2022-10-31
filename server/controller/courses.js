@@ -24,6 +24,18 @@ module.exports = {
                 throw err;
             });
     },
+    getUserCourses: async(req, res) => {
+        let db_connect = dbo.getDb("runtime-hunter");
+        db_connect.collection("courses")
+            .find({"creatorId": req.params.userId}).toArray()
+            .then((result) => {
+                res.json(result);
+            })
+            .catch((err) => {
+                console.log(err);
+                throw err;
+            });
+    },
     addCourse: async(req, res) => {
         let db_connect = dbo.getDb("runtime-hunter");
         let course = {
