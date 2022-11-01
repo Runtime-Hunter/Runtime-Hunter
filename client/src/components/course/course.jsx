@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import { useNavigate } from "react-router";
 import "../course/course.scss";
 
-function Course({ courseId, concept, courseName }) {
+// eslint-disable-next-line react/prop-types
+function Course({ courseId, courseName, description }) {
 
   const navigate = useNavigate();
   const goToCourse = (e) => {
@@ -26,7 +27,7 @@ function Course({ courseId, concept, courseName }) {
               className="text-start course-link"
             >
               <h4>{`${courseName}`}</h4>
-              <h5>{`${concept}`}</h5>
+              <h5>{`${description}`}</h5>
             </a>
           </div>
         </div>

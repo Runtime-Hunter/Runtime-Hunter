@@ -1,12 +1,17 @@
 
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router";
+import { useStore } from "../../store/store";
 import "../level/level.scss";
 
 // eslint-disable-next-line react/prop-types
 function Level({ courseId, levelId, levelName, levelDescription, difficulty }) {
 
   const navigate = useNavigate();
+
+  const [state] = useStore();
+  const { user: currentUser } = state;
+
   const goToLevel = (e) => {
     if(levelId !== "unknown" & courseId !== "unknown"){
       e.preventDefault();
@@ -40,16 +45,18 @@ function Level({ courseId, levelId, levelName, levelDescription, difficulty }) {
             </a>
             
           </div>
-          <div
-            className="col-2 align-self-center"
-          >
-            <button
-              className="search-bar-button"
-              onClick={(e) => addTestcase(e)}
-            >
+          {currentUser.userType == 2 &&
+                    <div
+                      className="col-2 align-self-center"
+                    >
+                      <button
+                        className="search-bar-button"
+                        onClick={(e) => addTestcase(e)}
+                      >
               Add Testcase
-            </button>
-          </div>
+                      </button>
+                    </div>
+          }
         </div>
       </div>
     </div>
