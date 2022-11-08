@@ -24,7 +24,7 @@ function QuestionPage() {
 
   const [question, setQuestion] = useState();
   const [code, setCode] = useState(
-    lang ? (localStorage.getItem(`${"0"}_${lang.value}`) ? localStorage.getItem(`${"0"}_${lang.value}`) : (question ? question.codeCpp : lang.default)) : languageOptions[0].default
+    lang ? (localStorage.getItem(`${courseId}-${levelId}-${lang.value}`) ? localStorage.getItem(`${courseId}-${levelId}-${lang.value}`) : (question ? question.codeCpp : lang.default)) : languageOptions[0].default
   );
   const [output, setOutput] = useState("");
   const [details, setDetails] = useState("");
@@ -32,12 +32,19 @@ function QuestionPage() {
 
   function changeLang(language) {
     setLang(language);
-    setCode(localStorage.getItem(`${"0"}_${language.value}`) ? localStorage.getItem(`${"0"}_${language.value}`) : (language.value === "python" ? question.codePy : question.codeCpp));
+    setCode(localStorage.getItem(`${courseId}-${levelId}-${language.value}`) ? localStorage.getItem(`${courseId}-${levelId}-${language.value}`) : (language.value === "python" ? question.codePy : question.codeCpp));
   }
 
   function saveCode(code) {
     setCode(code);
-    localStorage.setItem(`${"0"}_${lang.value}`, code);
+    localStorage.setItem(`${courseId}-${levelId}-${lang.value}`, code);
+  }
+
+  function clearLocalStorage(){
+    if(courseId && levelId && lang){
+      localStorage.removeItem(`${courseId}-${levelId}-${lang.value}`)
+      setCode(lang.value === "python" ? question.codePy : question.codeCpp)
+    }
   }
 
   const fetchLevel = useCallback(
@@ -87,6 +94,19 @@ function QuestionPage() {
 
     return testcases;
   }
+
+  function encode(str) {
+    return (encodeURIComponent(str || ""));
+  }
+
+  function decode(bytes) {
+    var escaped = escape(atob(bytes || ""));
+    try {
+      return decodeURIComponent(escaped);
+    } catch {
+      return unescape(escaped);
+    }
+  }
   
   async function submit() {
     setOutput("");
@@ -98,14 +118,14 @@ function QuestionPage() {
         const formData = {
           "language_id": lang.id,
           "source_code": code,
-          "stdin": testcases[i].input,
+          ...( testcases[i].input !== "" && { "stdin": testcases[i].input }),
           // "expected_output": testcases[i].output,
         };
         // const formData = {
         //   "language_id": lang.id,
         //   "source_code": encode(code),
-        //   "stdin": encode(testcases[i].input),
-        //   "expected_output": encode(testcases[i].output),
+        //   ...( testcases[i].input !== "" && { "stdin": encode(testcases[i].input) }),
+        //   // "expected_output": encode(testcases[i].output),
         // };
 
         const response = await fetch(
@@ -123,6 +143,7 @@ function QuestionPage() {
           }
         );
         const jsonResponse = await response.json();
+        console.log("submittion first result", jsonResponse)
 
         const submissionResult = await fetch(
           process.env.REACT_APP_RAPID_API_URL + "/" + jsonResponse.token,
@@ -138,7 +159,8 @@ function QuestionPage() {
     
         const subResult = await submissionResult.json();
         console.log(subResult);
-        const testcaseResult = (parseInt(subResult.stdout) === parseInt(testcases[i].output) ? true : false);
+        // const testcaseResult = (parseInt(subResult.stdout) === parseInt(testcases[i].output) ? true : false);
+        const testcaseResult = (subResult.stdout.replace(/[\n\r]/g, "") === testcases[i].output ? true : false);
         setTestcaseResults([...testcaseResults, testcaseResult])
         const status = testcaseResult ? "Passed" : "Failed" 
         setDetails((oldDetail) => oldDetail + "\n" + "Input: " + testcases[i].input + " - Output: " + subResult.stdout + " => Result: " + status + "\n");
@@ -188,6 +210,12 @@ function QuestionPage() {
                 borderRadius: "4px"
               }}
             />
+            <Button
+              
+              style={{ marginTop: "10px", }}
+              onClick={clearLocalStorage}
+            >Clear code
+            </Button>
             <Button
               
               style={{ marginTop: "10px", display: "flex", marginLeft: "auto"  }}
