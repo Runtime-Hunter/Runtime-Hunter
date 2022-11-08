@@ -13,8 +13,8 @@ import "./create-testcase.css";
 
 const createTestcaseSchema = z
   .object({
-    input: z.string().nonempty(),
-    output: z.string().nonempty(),
+    input: z.string().optional(),
+    output: z.string().optional(),
   });
 
 
