@@ -6,6 +6,6 @@ const testcase = require("../controller/testcase");
 
 router.route('/api/testcase/:courseId/:levelId').get(testcase.getTestcases);
 router.route('/api/testcase/question/:levelId').get(testcase.getTestcase);
-router.route('/api/testcase/:courseId/:levelId/add').post(testcase.addTestcase);
+router.route('/api/testcase/:courseId/:levelId').post(testcase.addTestcase);
 
 module.exports = router;
