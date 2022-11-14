@@ -11,7 +11,7 @@ function Courses() {
 
 
   const getCourses = async () => {
-    await axios.get(`${process.env.REACT_APP_URL}/api/course/all`)
+    await axios.get(`${process.env.REACT_APP_URL}/api/course`)
       .then(res => {
         const data = res.data;
         let courseList = [];

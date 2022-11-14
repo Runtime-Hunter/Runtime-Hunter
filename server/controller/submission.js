@@ -50,9 +50,10 @@ module.exports = {
         let db_connect = dbo.getDb("runtime-hunter");
   
         let submission = {
+            submissionId : ObjectId(),
             userId: req.body.userId,
-            levelId: req.body.levelId,
             courseId: req.body.courseId,
+            levelId: req.body.levelId,
             timeSubmitted: req.body.timeSubmitted,
             status: req.body.status,
             runtime: req.body.runtime,
@@ -61,29 +62,30 @@ module.exports = {
 
         db_connect.collection("submissions").insertOne(submission, function(err, response) {
             if (err) throw err;
+            db_connect.collection("users")
+            .findOne({
+                "_id": ObjectId(req.body.userId),
+            })
+            .then(user => {
+                var gamesPlayed = user.gamesBeingPlayed;
+                if (!gamesPlayed.includes(req.body.courseId)) {
+                    gamesPlayed.push(req.body.courseId);
+    
+                    db_connect.collection("users")
+                    .updateOne({
+                        "_id": ObjectId(req.body.userId),
+                    }, {$set: {"gamesBeingPlayed": gamesPlayed}})
+                    .then(result => {
+                        // return res.json(result);
+                    })
+                    .catch(err => {
+                        throw err;
+                    });
+                }
+            });
             return res.json(response);
         });    
         
-        db_connect.collection("users")
-        .findOne({
-            "_id": ObjectId(req.body.userId),
-        })
-        .then(user => {
-            var gamesPlayed = user.gamesBeingPlayed;
-            if (!gamesPlayed.find(req.body.courseId)) {
-                gamesPlayed.push(req.body.courseId);
 
-                db_connect.collection("users")
-                .updateOne({
-                    "_id": ObjectId(req.body.userId),
-                }, {$set: {"gamesBeingPlayed": gamesPlayed}})
-                .then(result => {
-                    return res.json(result);
-                })
-                .catch(err => {
-                    throw err;
-                });
-            }
-        });
     }
 }

@@ -13,7 +13,7 @@ const { default: Layout } = require("../../components/layout/layout");
 function CoursePage() {
 
   // const getLevels = async () => {
-  //   await axios.get(`${process.env.REACT_APP_URL}/api/level/all`, { courseId: courseId })
+  //   await axios.get(`${process.env.REACT_APP_URL}/api/level`, { courseId: courseId })
   //     .then(res => {
   //       console.log("aa: ", res.data);
   //       const data = res.data;

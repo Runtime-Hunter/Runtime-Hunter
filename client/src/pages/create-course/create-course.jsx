@@ -44,7 +44,7 @@ function CreateCourse() {
     };
 
 
-    await axios.post(`${process.env.REACT_APP_URL}/api/course/add`, course).then(res => {
+    await axios.post(`${process.env.REACT_APP_URL}/api/course`, course).then(res => {
       navigate(`/${res.data.insertedId}/createQuestion`);
     }).catch(err => console.log(err))
   };

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { encode as base64_encode } from "base-64";
 import "prismjs/components/prism-clike";
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-javascript";
@@ -9,11 +10,13 @@ import { Badge, Button, Col, Container, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import Editor from "react-simple-code-editor";
+import { useStore } from "../../store/store";
 import Header from "../header/header";
 import { languageOptions } from "./languageOptions";
-import { decode as base64_decode, encode as base64_encode } from "base-64";
 
 function QuestionPage() {
+  const [state] = useStore();
+  const { user: currentUser } = state;
 
   const navigate = useNavigate();
 
@@ -148,11 +151,34 @@ function QuestionPage() {
     
         const subResult = await submissionResult.json();
         console.log(subResult);
-        // const testcaseResult = (parseInt(subResult.stdout) === parseInt(testcases[i].output) ? true : false);
-        const testcaseResult = (subResult.stdout.replace(/[\n\r]/g, "") === testcases[i].output ? true : false);
-        setTestcaseResults([...testcaseResults, testcaseResult])
-        const status = testcaseResult ? "Passed" : "Failed" 
+        // const testcasResultStatus = (parseInt(subResult.stdout) === parseInt(testcases[i].output) ? true : false);
+        const resultOutput = subResult.stdout.replace(/[\n\r]/g, "")
+        setOutput(resultOutput)
+        const testcasResultStatus = (resultOutput === testcases[i].output ? true : false);
+        setTestcaseResults([...testcaseResults, testcasResultStatus])
+        const status = testcasResultStatus ? "Passed" : "Failed" 
         setDetails((oldDetail) => oldDetail + "\n" + "Input: " + testcases[i].input + " - Output: " + subResult.stdout + " => Result: " + status + "\n");
+
+        let submission = {
+          userId: currentUser._id,
+          courseId: courseId,     
+          levelId: levelId,
+          timeSubmitted: new Date(Date.now()).toISOString(),
+          status: testcasResultStatus,
+          runtime: subResult.time,
+          language: lang,
+        };
+
+        await axios.post(
+          `${process.env.REACT_APP_URL}/api/submission`,
+          submission,
+        )
+          .then(subRes => {
+            console.log("Added submission to db", subRes)
+          })
+          .catch(err => {
+            console.log("Error while adding submission to db", err)
+          })
       }
       setDetails((oldDetail) => oldDetail.replace("Creating submission...", "All tests finished") );
       console.log("Testcase res: ", testcaseResults);
