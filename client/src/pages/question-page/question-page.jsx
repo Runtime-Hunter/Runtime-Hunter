@@ -11,6 +11,7 @@ import Select from "react-select";
 import Editor from "react-simple-code-editor";
 import Header from "../header/header";
 import { languageOptions } from "./languageOptions";
+import { decode as base64_decode, encode as base64_encode } from "base-64";
 
 function QuestionPage() {
 
@@ -94,20 +95,7 @@ function QuestionPage() {
 
     return testcases;
   }
-
-  function encode(str) {
-    return (encodeURIComponent(str || ""));
-  }
-
-  function decode(bytes) {
-    var escaped = escape(atob(bytes || ""));
-    try {
-      return decodeURIComponent(escaped);
-    } catch {
-      return unescape(escaped);
-    }
-  }
-  
+ 
   async function submit() {
     setOutput("");
     setDetails("Creating submission...\n");
@@ -115,24 +103,24 @@ function QuestionPage() {
     await getTestcases().then(async (testcases) => {
       for (let i = 0; i < testcases.length; i++) {
         console.log(testcases[i].input);
-        const formData = {
-          "language_id": lang.id,
-          "source_code": code,
-          ...( testcases[i].input !== "" && { "stdin": testcases[i].input }),
-          // "expected_output": testcases[i].output,
-        };
         // const formData = {
         //   "language_id": lang.id,
-        //   "source_code": encode(code),
-        //   ...( testcases[i].input !== "" && { "stdin": encode(testcases[i].input) }),
-        //   // "expected_output": encode(testcases[i].output),
+        //   "source_code": code,
+        //   ...( testcases[i].input !== "" && { "stdin": testcases[i].input }),
+        //   // "expected_output": testcases[i].output,
         // };
+        const formData = {
+          "language_id": lang.id,
+          "source_code": base64_encode(code),
+          ...( testcases[i].input !== "" && { "stdin": base64_encode(testcases[i].input) }),
+          // "expected_output": encode(testcases[i].output),
+        };
 
         const response = await fetch(
-          process.env.REACT_APP_RAPID_API_URL,
+          process.env.REACT_APP_RAPID_API_URL + "?base64_encoded=true",
           {
             method: "POST",
-            params: { base64_encoded: "true", fields: "*" },
+            // params: { base64_encoded: "true", fields: "*" },
             headers: {
               "x-rapidapi-host": process.env.REACT_APP_RAPID_API_HOST,
               "x-rapidapi-key": process.env.REACT_APP_RAPID_API_KEY,
@@ -143,13 +131,14 @@ function QuestionPage() {
           }
         );
         const jsonResponse = await response.json();
-        console.log("submittion first result", jsonResponse)
+        console.log("submission first result", jsonResponse)
 
         const submissionResult = await fetch(
           process.env.REACT_APP_RAPID_API_URL + "/" + jsonResponse.token,
+          // process.env.REACT_APP_RAPID_API_URL + "/bca25837-c46c-4a0f-9ab3-3f3552b2c667/?base64_encoded=true",
           {
             method: "GET",
-            params: { base64_encoded: "true", fields: "*" },
+            // params: { base64_encoded: "true", fields: "*" }
             headers: {
               "x-rapidapi-host": process.env.REACT_APP_RAPID_API_HOST,
               "x-rapidapi-key": process.env.REACT_APP_RAPID_API_KEY,
