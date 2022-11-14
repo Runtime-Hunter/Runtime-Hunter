@@ -43,7 +43,7 @@ function CreateTestcase() {
     };
 
 
-    await axios.post(`${process.env.REACT_APP_URL}/api/testcase/${courseId}/${levelId}/add`, testcase).then(res => {
+    await axios.post(`${process.env.REACT_APP_URL}/api/testcase/${courseId}/${levelId}`, testcase).then(res => {
       navigate(`/courses/${courseId}/${levelId}`);
     }).catch(err => console.log(err))
   };

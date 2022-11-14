@@ -1,22 +1,22 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
 import { Navigate } from "react-router";
+import { Route, Routes } from "react-router-dom";
 
 import "./App.css";
 import AboutUs from "./pages/aboutus-page/about-us";
-import CoursePage from "./pages/course-page/course-page";
-import Landing from "./pages/landing/landing";
-import Login from "./pages/login/login";
-import Signup from "./pages/signup/signup";
 import ChangePassword from "./pages/change-password/change-password";
-import ErrorPage from "./pages/error-page/error-page";
+import CoursePage from "./pages/course-page/course-page";
 import Courses from "./pages/courses/courses";
 import CreateCourse from "./pages/create-course/create-course";
-import { useStore } from "./store/store";
-import Homepage from "./pages/homepage/homepage";
 import CreateQuestion from "./pages/create-question/create-question";
-import QuestionPage from "./pages/question-page/question-page";
 import CreateTestcase from "./pages/create-testcase/create-testcase";
+import ErrorPage from "./pages/error-page/error-page";
+import Homepage from "./pages/homepage/homepage";
+import Landing from "./pages/landing/landing";
+import Login from "./pages/login/login";
+import QuestionPage from "./pages/question-page/question-page";
+import Signup from "./pages/signup/signup";
+import { useStore } from "./store/store";
 function App() {
   const [state] = useStore();
   const { user: currentUser } = state;
@@ -73,11 +73,7 @@ function App() {
             />
             <Route
               path="/"
-              element={<Homepage />}
-            />
-            <Route
-              path="*"
-              element={<ErrorPage />}
+              element={<Courses />}
             />
             <Route
               path="/aboutUs"
@@ -86,6 +82,10 @@ function App() {
             <Route
               path="/courses/:courseId/:levelId"
               element={<QuestionPage />}
+            />
+            <Route
+              path="*"
+              element={<ErrorPage />}
             />
             {currentUser.userType == 2 &&
           <>
@@ -100,6 +100,10 @@ function App() {
             <Route
               path="/courses/:courseId/:levelId/testcase"
               element={<CreateTestcase />}
+            />
+            <Route
+              path="*"
+              element={<ErrorPage />}
             />
           </>}
           </>
