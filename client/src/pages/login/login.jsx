@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useCallback, useState } from "react";
+import { Spinner } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -29,10 +30,12 @@ function Login() {
 
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setLoading] = useState(false);
   const navigate = useNavigate();
 
 
   const onSubmit = useCallback((data) => {
+    setLoading(true);
     const user = {
       email: data.email,
       password: data.password,
@@ -41,6 +44,7 @@ function Login() {
       .post(`${process.env.REACT_APP_URL}/api/login/${user.email}`, { data: { user: user } })
       .then((res) => {
         console.log(res);
+        setLoading(false);
         if (res.status === 200 && res.data.message) {
           setErrorMessage(res.data.message);
         } else if (res.status === 200) {
@@ -99,9 +103,16 @@ function Login() {
                 <div className="mt-5 row text-center justify-content-center">
                   <button
                     type='submit'
-                    className="col-6 btn btn-block btn-success"
+                    className="col-6 btn btn-block btn-success py-2"
                   >
-                      SIGN IN
+                    {
+                      isLoading &&
+                      <Spinner
+                        animation="border"
+                        size="sm"
+                      />
+                    }
+                    {!isLoading && "SIGN IN"}
                   </button>
                 </div>
                 <div className="mt-3 row text-center justify-content-center">
@@ -122,7 +133,7 @@ function Login() {
                     <span
                       className="link-line-gap d-flex justify-content-center"
                     >
-                    Don&apos;t have an account?
+                      Don&apos;t have an account?
                       <Link
                         className="link-success"
                         to="/signup"
