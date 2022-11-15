@@ -152,8 +152,12 @@ function QuestionPage() {
         const subResult = await submissionResult.json();
         console.log(subResult);
         // const testcasResultStatus = (parseInt(subResult.stdout) === parseInt(testcases[i].output) ? true : false);
-        const resultOutput = subResult.stdout.replace(/[\n\r]/g, "")
+        // const resultOutput = subResult.stdout.replace(/[\n\r]/g, "")
+        let resultOutput = subResult.stdout
+        resultOutput = resultOutput.trim()
         setOutput(resultOutput)
+        console.log("Submission output: ",resultOutput)
+        console.log("question output: ",testcases[i].output)
         const testcasResultStatus = (resultOutput === testcases[i].output ? true : false);
         setTestcaseResults([...testcaseResults, testcasResultStatus])
         const status = testcasResultStatus ? "Passed" : "Failed" 
