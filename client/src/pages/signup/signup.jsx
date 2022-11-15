@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useCallback, useState } from "react";
+import { Spinner } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
@@ -48,6 +49,7 @@ function Signup() {
     mode: "all",
   });
 
+  const [isLoading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
   const onSubmit = useCallback((data) => {
@@ -173,7 +175,14 @@ function Signup() {
                       className="btn btn-block col-6 btn-success"
                       type='submit'
                     >
-                      SIGN UP
+                      {
+                        isLoading &&
+                        <Spinner
+                          animation="border"
+                          size="sm"
+                        />
+                      }
+                      {!isLoading && "SIGN UP"}
                     </button>
                   </div>
                 </div>
