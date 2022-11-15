@@ -10,10 +10,10 @@ import "../homepage/homepage.css";
 
 function Homepage() {
   const [state] = useStore();
+  const { user: currentUser } = state;
 
   const navigate = useNavigate();
 
-  const { user: currentUser } = state;
 
   const [list, setList] = useState();
 

@@ -80,7 +80,7 @@ function CreateQuestion() {
     };
 
 
-    await axios.post(`${process.env.REACT_APP_URL}/api/level/add`, level).then(res => {
+    await axios.post(`${process.env.REACT_APP_URL}/api/level`, level).then(res => {
       console.log(res);
       navigate("/courses");
 
