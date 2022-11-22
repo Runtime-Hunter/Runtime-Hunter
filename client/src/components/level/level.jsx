@@ -1,5 +1,6 @@
 
 import PropTypes from "prop-types";
+import { Badge } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { useStore } from "../../store/store";
 import "../level/level.scss";
@@ -13,18 +14,24 @@ function Level({ courseId, levelId, levelName, levelDescription, difficulty }) {
   const { user: currentUser } = state;
 
   const goToLevel = (e) => {
-    if(levelId !== "unknown" & courseId !== "unknown"){
+    if (levelId !== "unknown" & courseId !== "unknown") {
       e.preventDefault();
       e.stopPropagation();
       navigate(`/courses/${courseId}/${levelId}`)
     }
   }
   const addTestcase = (e) => {
-    if(levelId !== "unknown" & courseId !== "unknown"){
+    if (levelId !== "unknown" & courseId !== "unknown") {
       e.preventDefault();
       e.stopPropagation();
       navigate(`/courses/${courseId}/${levelId}/testcase`)
     }
+  }
+
+  const difficulties = {
+    "easy": { color: "success", label: "Easy" },
+    "medium": { color: "warning", label: "Medium" },
+    "hard": { color: "danger", label: "Hard" },
   }
 
   return (
@@ -34,28 +41,33 @@ function Level({ courseId, levelId, levelName, levelDescription, difficulty }) {
           <div
             className="col-8 courseName"
           >
-           
+
             <a
               className="text-start course-link"
               onClick={(e) => goToLevel(e)}
             >
-              <h4>{`${levelName}`}</h4>
-              <h5>{`${levelDescription}`}</h5>
-              <h5>{`${difficulty}`}</h5>
+              <h4>
+                <Badge bg={difficulties[difficulty].color}>
+                  {difficulties[difficulty].label}
+                </Badge>
+                <span className="mx-2">{levelName}</span>
+              </h4>
+              <h5 className="mt-2">{`${levelDescription}`}</h5>
+              {/* <h5>{`${difficulty}`}</h5> */}
             </a>
-            
+
           </div>
           {currentUser.userType == 2 &&
-                    <div
-                      className="col-2 align-self-center"
-                    >
-                      <button
-                        className="search-bar-button"
-                        onClick={(e) => addTestcase(e)}
-                      >
-              Add Testcase
-                      </button>
-                    </div>
+            <div
+              className="col-2 align-self-center"
+            >
+              <button
+                className="search-bar-button"
+                onClick={(e) => addTestcase(e)}
+              >
+                Add Testcase
+              </button>
+            </div>
           }
         </div>
       </div>
@@ -67,17 +79,17 @@ function Level({ courseId, levelId, levelName, levelDescription, difficulty }) {
 
 Level.propTypes = {
   levelId: PropTypes.string,
-  levelName:PropTypes.string,
+  levelName: PropTypes.string,
   levelDescription: PropTypes.string,
   difficulty: PropTypes.string,
   submissions: PropTypes.array,
   testCases: PropTypes.array,
-  edit:PropTypes.func
+  edit: PropTypes.func
 }
 
 Level.defaultProps = {
   levelId: "unknown",
-  levelName:"unknown",
+  levelName: "unknown",
   levelDescription: "unknown",
   difficulty: "unknown",
   submissions: "unknown",

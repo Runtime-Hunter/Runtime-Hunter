@@ -72,25 +72,25 @@ function Landing() {
             <Nav.Link
               href="/login"
               align="end"
-              className="loginBtn mr-3"
+              className="loginBtn px-2 py-1 mr-3"
             >
               <span
                 className="uploadBtnText"
               >
 
-            Sign-In
+                Sign-In
               </span>
             </Nav.Link>
             <Nav.Link
               href="/signup"
               align="end"
-              className="uploadBtn"
+              className="uploadBtn px-2 py-1"
             >
               <span
                 className="uploadBtnText"
               >
 
-            Sign-Up
+                Sign-Up
               </span>
             </Nav.Link>
           </Navbar.Collapse>
@@ -115,10 +115,10 @@ function Landing() {
             Top Tracks
           </span>
           <hr></hr>
-          { uniList ?
+          {uniList ?
             (uniList.length > 0 ?
               uniList.map((item, index) => {
-                return(
+                return (
                   <div
                     key={index}
                   >
@@ -135,19 +135,19 @@ function Landing() {
                         className="text-start top-document-text"
                         key={index}
                       >
-                        {item.courses[0] ?  item.courses[0].courseName : "No Course"}
+                        {item.courses[0] ? item.courses[0].courseName : "No Course"}
                       </p>
                       <p
                         className="text-start top-document-text"
                         key={index}
                       >
-                        {item.courses[1] ?  item.courses[1].courseName : "No Course"}
+                        {item.courses[1] ? item.courses[1].courseName : "No Course"}
                       </p>
                     </button>
                   </div>
 
                 );
-              }) :<p>No course yet !!!</p>)            :
+              }) : <p>No course yet !!!</p>) :
             <p>Loading...</p>
 
           }
@@ -167,10 +167,10 @@ function Landing() {
             Top Topics
           </span>
           <hr></hr>
-          { list ?
+          {list ?
             (list.length > 0 ?
               list.map((item, index) => {
-                return(
+                return (
                   <div
                     key={index}
                     className="mb-1"
@@ -189,7 +189,7 @@ function Landing() {
                     </button>
                   </div>
                 );
-              }) :<p>No note has been uploaded yet !!!</p>)            :
+              }) : <p>No note has been uploaded yet !!!</p>) :
             <p>Loading...</p>
           }
         </div>
