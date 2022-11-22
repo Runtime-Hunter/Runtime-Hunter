@@ -74,13 +74,13 @@ function ProfilePage() {
         </div>
       </div>
       <hr className="profile-page-divider mx-5 solid"></hr>
-      <div className="profile-info row align-items-center mr-0">
+      <div className=" row align-items-center mr-0">
         <div className="col-2 profileImgLocation mt-2">
         
           {difficultyCounts ? 
             <PieChart
               lineWidth={20}
-              radius={45}
+              radius={35}
               data={[
                 { title: "Easy", value: difficultyCounts["easy"], color: "#1E8449" },
                 { title: "Medium", value: difficultyCounts["medium"], color: "#E7A428" },
@@ -88,6 +88,19 @@ function ProfilePage() {
               ]}
             /> :
             undefined}
+        </div>
+        <div className="col-4">
+          <div className="mt-3" >
+            <p>
+              Easy: {difficultyCounts ? difficultyCounts["easy"]: ""}
+            </p>
+            <p>
+              Medium: {difficultyCounts ? difficultyCounts["medium"]: ""}
+            </p>
+            <p>
+              Hard: {difficultyCounts ? difficultyCounts["hard"]: ""}
+            </p>
+          </div>
         </div>
       </div>
       
