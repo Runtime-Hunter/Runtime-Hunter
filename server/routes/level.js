@@ -1,11 +1,12 @@
-const express = require("express");
-const router = express.Router();
+import { Router } from "express";
+const router = Router();
 
-const levels = require("../controller/level");
+import { getLevels, getLevel, bulkGetLevels, addLevel } from "../controller/level.js";
 
 
-router.route('/api/level/:courseId').get(levels.getLevels);
-router.route('/api/level/:courseId/:levelId').get(levels.getLevel);
-router.route('/api/level').post(levels.addLevel);
+router.route('/api/level/:courseId').get(getLevels);
+router.route('/api/level/:courseId/:levelId').get(getLevel);
+router.route('/api/levels/user').post(bulkGetLevels)
+router.route('/api/level').post(addLevel);
 
-module.exports = router;
+export default router;
