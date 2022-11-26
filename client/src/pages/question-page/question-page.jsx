@@ -13,6 +13,7 @@ import Editor from "react-simple-code-editor";
 import { useStore } from "../../store/store";
 import Header from "../header/header";
 import { languageOptions } from "./languageOptions";
+import "./question-page.css";
 
 function QuestionPage() {
   const [state] = useStore();
@@ -211,25 +212,22 @@ function QuestionPage() {
               <hr 
                 className="solid"
               />
-              <p>{question ? question.levelDescription : ""}</p>
+              {/* <div style={{ whiteSpace: "normal" }}>{question ? question.levelDescription : ""}</div> */}
+              {question ? (question.levelDescription.split("\n")).map((item, index) => {
+                return (
+                  <div key={index}>
+                    {item}
+                    <br/>
+                  </div>
+                );
+              }) : "" }
             </div>
           </Col>
           <Col
-            style={{ height: "100%" }}
-            xs={2}
+            style={{ height: "100%", marginTop: "6%" }}
+            className={"questionPageDivider"}
           >
-            <div
-              style={{
-                borderLeft: "6px solid #59859a",
-                height: "500px",
-                width: "100px",
-                position: "absolute",
-                left: "50%",
-                marginLeft: "-3px",
-                top: "0",
-              }}
-            >
-            </div>
+            
           </Col>
           <Col>
             <LanguagesDropdown

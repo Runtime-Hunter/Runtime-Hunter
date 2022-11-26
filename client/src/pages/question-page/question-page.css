@@ -34,8 +34,8 @@
   hr.solid {
     border-top: 3px solid #bbb;
   }
-  .question-page-divider {
-    border-left: 6px solid #b0bec5;
+  .questionPageDivider {
+    border-left: 10px solid #f8f9fa;
     height: 500px;
     position: absolute;
     left: 50%;
