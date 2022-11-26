@@ -42,3 +42,8 @@
     margin-left: -3px;
     top: 0;
   }
+  .codeBlock code {
+    color: black;
+    background-color: rgb(234, 234, 234);
+    padding: 2px;
+  }

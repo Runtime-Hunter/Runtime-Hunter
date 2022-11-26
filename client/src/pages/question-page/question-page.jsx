@@ -14,6 +14,9 @@ import { useStore } from "../../store/store";
 import Header from "../header/header";
 import { languageOptions } from "./languageOptions";
 import "./question-page.css";
+import DOMPurify from "dompurify";
+
+
 
 function QuestionPage() {
   const [state] = useStore();
@@ -27,6 +30,8 @@ function QuestionPage() {
     languageOptions[0]
   );
 
+
+
   const [question, setQuestion] = useState();
   const [code, setCode] = useState(
     lang ? (localStorage.getItem(`${courseId}-${levelId}-${lang.value}`) ? localStorage.getItem(`${courseId}-${levelId}-${lang.value}`) : (question ? question.codeCpp : lang.default)) : languageOptions[0].default
@@ -34,6 +39,12 @@ function QuestionPage() {
   const [output, setOutput] = useState("");
   const [details, setDetails] = useState("");
   const [testcaseResults, setTestcaseResults] = useState([]);
+
+  // const createMarkup = (html) => {
+  //   return  {
+  //     __html: DOMPurify.sanitize(html)
+  //   }
+  // }
 
   function changeLang(language) {
     setLang(language);
@@ -195,11 +206,14 @@ function QuestionPage() {
 
   return (
     <div>
+      
       <Header />
-      <Container fluid>
-        <Row style={{ padding: "10px" }}>
+      <Container
+        fluid
+      >
+        <Row style={{ padding: "10px", overflow: "hidden" }}>
           <Col
-            style={{ height: "600px" }}
+            style={{ height: "600px", overflow: "scroll" }}
             xs={6}
           >
             <div
@@ -212,24 +226,22 @@ function QuestionPage() {
               <hr 
                 className="solid"
               />
-              {/* <div style={{ whiteSpace: "normal" }}>{question ? question.levelDescription : ""}</div> */}
-              {question ? (question.levelDescription.split("\n")).map((item, index) => {
-                return (
-                  <div key={index}>
-                    {item}
-                    <br/>
-                  </div>
-                );
-              }) : "" }
+              {question ? 
+                <div
+                  className="codeBlock"
+                  dangerouslySetInnerHTML={{ __html: question.levelDescription }} 
+                /> :
+                ""}
             </div>
+           
           </Col>
           <Col
-            style={{ height: "100%", marginTop: "6%" }}
+            style={{ height: "88%", marginTop: "6%" }}
             className={"questionPageDivider"}
           >
             
           </Col>
-          <Col>
+          <Col style={{ overflow: "hidden" }}>
             <LanguagesDropdown
               onSelectChange={changeLang}
             /> 
@@ -239,7 +251,7 @@ function QuestionPage() {
               highlight={code => highlight(code, languages[lang.highlighter])}
               padding={10}
               style={{
-                height: "85%",
+                height: "82%",
                 fontFamily: "'Fira code', 'Fira Mono', monospace",
                 fontSize: 12,
                 borderColor: "grey",
