@@ -359,10 +359,13 @@ function QuestionPage() {
           <Col
             style={{ height: "100%", marginTop: "6%" }}
             className={"questionPageDivider"}
+            xs={1}
           >
             
           </Col>
-          <Col>
+          <Col
+            xs={5}
+          >
             <LanguagesDropdown
               onSelectChange={changeLang}
             /> 
