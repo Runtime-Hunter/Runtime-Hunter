@@ -61,7 +61,7 @@ function App() {
               element={<Navigate to="/home"/>}
             />
             <Route
-              path="/courses"
+              path="/courses/:searchQuery"
               element={<Courses />}
             />
             <Route
