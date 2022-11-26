@@ -6,7 +6,7 @@ import { useStore } from "../../store/store";
 import "../level/level.scss";
 
 // eslint-disable-next-line react/prop-types
-function Level({ courseId, levelId, levelName, levelDescription, difficulty }) {
+function Level({ courseId, levelId, levelName, levelTags, difficulty }) {
 
   const navigate = useNavigate();
 
@@ -52,8 +52,8 @@ function Level({ courseId, levelId, levelName, levelDescription, difficulty }) {
                 </Badge>
                 <span className="mx-2">{levelName}</span>
               </h4>
-              <h5 className="mt-2">{`${levelDescription}`}</h5>
-              {/* <h5>{`${difficulty}`}</h5> */}
+              <h5 className="mt-2">{levelTags}</h5>
+
             </a>
 
           </div>
@@ -80,6 +80,7 @@ function Level({ courseId, levelId, levelName, levelDescription, difficulty }) {
 Level.propTypes = {
   levelId: PropTypes.string,
   levelName: PropTypes.string,
+  levelTags: PropTypes.string,
   levelDescription: PropTypes.string,
   difficulty: PropTypes.string,
   submissions: PropTypes.array,
@@ -90,6 +91,7 @@ Level.propTypes = {
 Level.defaultProps = {
   levelId: "unknown",
   levelName: "unknown",
+  levelTags: "unknown",
   levelDescription: "unknown",
   difficulty: "unknown",
   submissions: "unknown",
