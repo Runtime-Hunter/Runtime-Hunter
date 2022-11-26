@@ -1,28 +1,28 @@
-const express = require("express");
+import "dotenv/config.js";
+import express, { json, static as _static } from "express";
 const app = express();
-const cors = require("cors");
-require("dotenv").config({ path: "./config.env" });
+import cors from "cors";
 const port = process.env.PORT || 5000;
-const registrationRouter = require("./routes/registration");
-const levelsRouter = require("./routes/level");
-const coursesRouter = require("./routes/courses");
-const testcasesRouter = require("./routes/testcase");
-const submissionsRouter = require("./routes/submission")
+import userRouter from "./routes/user.js";
+import levelsRouter from "./routes/level.js";
+import coursesRouter from "./routes/courses.js";
+import testcasesRouter from "./routes/testcase.js";
+import submissionsRouter from "./routes/submission.js";
     
 app.use(cors({origin: "*", methods: "*"}));
-app.use(express.json());
+app.use(json());
 
-app.use("/", registrationRouter);
+app.use("/", userRouter);
 app.use("/", levelsRouter);
 app.use("/", coursesRouter);
 app.use("/", testcasesRouter);
 app.use("/", submissionsRouter);
 
-const dbo = require("./db/conn");
+import { connectToServer } from "./db/conn.js";
 
 if (process.env.NODE_ENV === 'production') {
   // Express will serve up production assets
-  app.use(express.static('../client/build'));
+  app.use(_static('../client/build'));
 
   // Express serve up index.html file if it doesn't recognize route
   const path = require('path');
@@ -34,7 +34,7 @@ if (process.env.NODE_ENV === 'production') {
 app.listen(port, () => {
   console.log(`Server will start on port: ${port}`)
   // perform a database connection when server starts
-  dbo.connectToServer(function (err) {
+  connectToServer(function (err) {
     if (err) console.error(err);
  
   });

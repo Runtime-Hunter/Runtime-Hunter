@@ -1,13 +1,13 @@
-const express = require("express");
-const router = express.Router();
+import { Router } from "express";
+const router = Router();
 
-const submission = require("../controller/submission");
+import { getSubmissions, getSubmission, getUserSubmissions, getUserQuestionSubmission, addSubmission } from "../controller/submission.js";
 
 
-router.route('/api/submission').get(submission.getSubmissions);
-router.route('/api/submission/:id').get(submission.getSubmission);
-router.route('/api/submission/user').get(submission.getUserSubmissions);
-router.route('/api/submission/userquestion').get(submission.getUserQuestionSubmission);
-router.route('/api/submission').post(submission.addSubmission);
+router.route('/api/submission').get(getSubmissions);
+router.route('/api/submission/:id').get(getSubmission);
+router.route('/api/submission/user').post(getUserSubmissions);
+router.route('/api/submission/userquestion').get(getUserQuestionSubmission);
+router.route('/api/submission').post(addSubmission);
 
-module.exports = router;
+export default router;

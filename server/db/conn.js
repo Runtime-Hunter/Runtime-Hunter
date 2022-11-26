@@ -1,4 +1,5 @@
-const { MongoClient } = require("mongodb");
+import { MongoClient } from "mongodb";
+import "dotenv/config.js";
 
 const Db = process.env.ATLAS_URI;
 const client = new MongoClient(Db, {
@@ -9,22 +10,18 @@ const client = new MongoClient(Db, {
 var _db;
  
 
-module.exports = {
-  connectToServer: function (callback) {
-    client.connect(function (err, db) {
-      // Verify we got a good "db" object
-      if (db)
-      {
-        
-        _db = db.db("runtime-hunter");
+export function connectToServer(callback) {
+  client.connect(function (err, db) {
+    // Verify we got a good "db" object
+    if (db) {
 
-        console.log("Successfully connected to MongoDB."); 
-      }
-      return callback(err);
-         });
-  },
- 
-  getDb: function () {
-    return _db;
-  },
-};
+      _db = db.db("runtime-hunter");
+
+      console.log("Successfully connected to MongoDB.");
+    }
+    return callback(err);
+  });
+}
+export function getDb() {
+  return _db;
+}

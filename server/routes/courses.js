@@ -1,12 +1,12 @@
-const express = require("express");
-const router = express.Router();
+import { Router } from "express";
+const router = Router();
 
-const courses = require("../controller/courses");
+import { getCourses, getCourse, getUserCourses, addCourse } from "../controller/courses.js";
 
 
-router.route('/api/course').get(courses.getCourses);
-router.route('/api/course/:courseId').get(courses.getCourse);
-router.route('/api/user/course/:userId').get(courses.getUserCourses);
-router.route('/api/course').post(courses.addCourse);
+router.route('/api/course').get(getCourses);
+router.route('/api/course/:courseId').get(getCourse);
+router.route('/api/user/course/:userId').get(getUserCourses);
+router.route('/api/course').post(addCourse);
 
-module.exports = router;
+export default router;
