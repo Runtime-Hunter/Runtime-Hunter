@@ -201,14 +201,35 @@ function QuestionPage() {
             style={{ height: "600px" }}
             xs={6}
           >
-            <h2>
-              <Badge bg="secondary">Question</Badge>
-            </h2>
-            <textarea
-              style={{ width: "100%", height: "50%", padding: "8px" }}
+            <div
+              style={{ width: "100%", height: "85%", padding: "8px" }}
               disabled
-              value={question ? question.levelDescription : ""}
-            />
+            >
+              <h2>
+                <Badge bg="secondary">{question ? question.levelName : ""}</Badge>
+              </h2>
+              <hr 
+                className="solid"
+              />
+              <p>{question ? question.levelDescription : ""}</p>
+            </div>
+          </Col>
+          <Col
+            style={{ height: "100%" }}
+            xs={2}
+          >
+            <div
+              style={{
+                borderLeft: "6px solid #59859a",
+                height: "500px",
+                width: "100px",
+                position: "absolute",
+                left: "50%",
+                marginLeft: "-3px",
+                top: "0",
+              }}
+            >
+            </div>
           </Col>
           <Col>
             <LanguagesDropdown
@@ -220,45 +241,54 @@ function QuestionPage() {
               highlight={code => highlight(code, languages[lang.highlighter])}
               padding={10}
               style={{
-                height: "50%",
+                height: "85%",
                 fontFamily: "'Fira code', 'Fira Mono', monospace",
                 fontSize: 12,
                 borderColor: "grey",
                 borderWidth: "0.5px",
                 borderStyle: "solid",
-                borderRadius: "4px"
+                borderRadius: "4px",
               }}
             />
-            <Button
+            <Row>
+              <Col>
+                <Button
+                  style={{ marginTop: "10px", }}
+                  onClick={clearLocalStorage}
+                >Clear code
+                </Button>
+              </Col>
+              <Col>
+                <Button
               
-              style={{ marginTop: "10px", }}
-              onClick={clearLocalStorage}
-            >Clear code
-            </Button>
-            <Button
-              
-              style={{ marginTop: "10px", display: "flex", marginLeft: "auto"  }}
-              onClick={submit}
-            >Compile & Run
-            </Button>
-            <h2>
-              <Badge bg="secondary">Details:</Badge>
+                  style={{ marginTop: "10px", display: "flex", marginLeft: "auto"  }}
+                  onClick={submit}
+                >Compile & Run
+                </Button>
+              </Col>
+            </Row>
+            {/* <h2>
+              <Badge
+                bg="secondary"
+                style={{ marginTop: "10px", }}
+              >Details:
+              </Badge>
             </h2>
             <textarea
-              style={{ width: "100%", height: "50%", padding: "8px" }}
+              style={{ width: "100%", height: "23%", padding: "8px" }}
               disabled
               value={details}
-            />
+            /> */}
             
           </Col>
-          {(testcaseResults && testcaseResults.length > 0) ? (testcaseResults.map((result, index) => {
+          {/* {(testcaseResults && testcaseResults.length > 0) ? (testcaseResults.map((result, index) => {
             return(
               <p
                 key={index}
               > Testcase {testcaseResults.length} is passed
               </p>
             )
-          })) : "aaa"}
+          })) : ""} */}
         </Row>
 
       </Container>

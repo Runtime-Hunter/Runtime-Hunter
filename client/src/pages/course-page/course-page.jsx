@@ -208,7 +208,7 @@ function CoursePage() {
                         courseId={courseId}
                         levelId={item.levelId}
                         levelName={item.levelName}
-                        levelDescription={item.levelDescription}
+                        levelTags={item.levelTags ?? ""}
                         difficulty={item.difficulty}
                       />
 

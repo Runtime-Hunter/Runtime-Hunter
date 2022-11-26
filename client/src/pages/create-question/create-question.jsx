@@ -22,6 +22,7 @@ import { Col, Row } from "react-bootstrap";
 const createQuestionSchema = z
   .object({
     levelName: z.string().nonempty(),
+    levelTags: z.string().nonempty(),
     levelDescription: z.string().nonempty(),
     difficulty: z.string().nonempty(),
   });
@@ -71,6 +72,7 @@ function CreateQuestion() {
 
     const level = {
       levelName: data.levelName,
+      levelTags: data.levelTags,
       levelDescription: data.levelDescription,
       difficulty: data.difficulty,
       testCases: data.testCases,
@@ -108,12 +110,24 @@ function CreateQuestion() {
             </div>
             <div className="mt-3 d-flex flex-column">
               <input
-                {...register("levelDescription")}
+                {...register("levelTags")}
                 className="btn-border input-style form-control"
-                placeholder="Question Description"
+                placeholder="Question Tags"
                 type="text"
               >
               </input>
+              <small className="align-self-start error-text">
+                {errors.levelName?.message}
+              </small>
+    
+            </div>
+            <div className="mt-3 d-flex flex-column">
+              <textarea
+                {...register("levelDescription")}
+                className="btn-border input-style form-control"
+                placeholder="Question Description"
+              >
+              </textarea>
               <small className="align-self-start error-text">
                 {errors.levelDescription?.message}
               </small>
