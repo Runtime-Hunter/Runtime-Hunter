@@ -339,7 +339,7 @@ function QuestionPage() {
                                   }
                                 >{item.status ? "Accepted" : "Failed"}
                                 </td>
-                                <td>{item.runtime}</td>
+                                <td>{item.runtime * 1000} ms</td>
                                 <td>{item.language.label}</td>
                               </tr>
                             )
