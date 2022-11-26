@@ -51,12 +51,16 @@ function CoursePage() {
           .then((res) => {
             if(res.data !== null){
               setCourse(res.data);
-              var levelsArr = [];
+              var levelsArrEasy = [];
+              var levelsArrMedium = [];
+              var levelsArrHard = [];
               for (let i = 0; i < res.data.levels.length; i++) {
-                levelsArr.push(res.data.levels[i]);
+                if (res.data.levels[i].difficulty === "easy") levelsArrEasy.push(res.data.levels[i]);
+                if (res.data.levels[i].difficulty === "medium") levelsArrMedium.push(res.data.levels[i]);
+                if (res.data.levels[i].difficulty === "hard") levelsArrHard.push(res.data.levels[i]);
               }
 
-              setLevels(levelsArr);
+              setLevels([...levelsArrEasy, ...levelsArrMedium, ...levelsArrHard]);
 
             }
             else{
@@ -208,7 +212,7 @@ function CoursePage() {
                         courseId={courseId}
                         levelId={item.levelId}
                         levelName={item.levelName}
-                        levelDescription={item.levelDescription}
+                        levelTags={item.levelTags ?? ""}
                         difficulty={item.difficulty}
                       />
 

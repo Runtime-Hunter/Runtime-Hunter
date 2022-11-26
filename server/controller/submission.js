@@ -15,7 +15,7 @@ export async function getSubmissions(req, res) {
 export async function getSubmission(req, res) {
     let db_connect = getDb("runtime-hunter");
     db_connect.collection("submissions")
-        .findOne({ "_id": ObjectId(req.body.submissionId) })
+        .findOne({ "_id": ObjectId(req.params.id) })
         .then((result) => {
             res.json(result);
         })

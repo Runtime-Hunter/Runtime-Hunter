@@ -17,12 +17,20 @@ import "prismjs/components/prism-python";
 import "prismjs/themes/prism.css"; //Example style, you can use another
 import "./create-question.css";
 import { Col, Row } from "react-bootstrap";
+import { EditorState } from "draft-js";
+import "draft-js/dist/Draft.css";
+import { ContentState, convertToRaw } from "draft-js";
+import { Editor as DraftEditor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import "./create-question.css";
+import { convertToHTML } from "draft-convert";
+
 
 
 const createQuestionSchema = z
   .object({
     levelName: z.string().nonempty(),
-    levelDescription: z.string().nonempty(),
+    levelTags: z.string().nonempty(),
     difficulty: z.string().nonempty(),
   });
 
@@ -33,6 +41,12 @@ function CreateQuestion() {
   const navigate = useNavigate();
   const { courseId } = useParams();
 
+  const [editorState, setEditorState] = useState(
+    () => EditorState.createEmpty(),
+  );
+
+  const  [convertedContent, setConvertedContent] = useState(null);
+  
   const [editorErrors, setEditorErrors] = useState({ codeCpp: "", codePy: "" })
 
   const [codeCpp, setCodeCpp] = useState(languageOptions[0].default);
@@ -46,6 +60,19 @@ function CreateQuestion() {
     setCodePy(code);
   }
 
+  const handleEditorChange = (state) => {
+    setEditorState(state);
+    convertContentToHTML();
+  }
+
+  const convertContentToHTML = async () => {
+    let currentContentAsHTML = convertToHTML(editorState.getCurrentContent());
+    setConvertedContent(currentContentAsHTML);
+  }
+
+  
+
+
   const {
     register,
     handleSubmit,
@@ -56,6 +83,7 @@ function CreateQuestion() {
   });
 
   const onSubmit = async (data) => {
+    await convertContentToHTML();
     
     if (codeCpp === languageOptions[0].default || codeCpp === "") {
       setEditorErrors(editorErrors => ({ ...editorErrors, codeCpp: "Cpp code should not be empty or default" }));
@@ -71,7 +99,8 @@ function CreateQuestion() {
 
     const level = {
       levelName: data.levelName,
-      levelDescription: data.levelDescription,
+      levelTags: data.levelTags,
+      levelDescription: convertedContent,
       difficulty: data.difficulty,
       testCases: data.testCases,
       courseId,
@@ -108,12 +137,29 @@ function CreateQuestion() {
             </div>
             <div className="mt-3 d-flex flex-column">
               <input
-                {...register("levelDescription")}
+                {...register("levelTags")}
                 className="btn-border input-style form-control"
-                placeholder="Question Description"
+                placeholder="Question Tags"
                 type="text"
               >
               </input>
+              <small className="align-self-start error-text">
+                {errors.levelName?.message}
+              </small>
+    
+            </div>
+            <div className="mt-3 d-flex flex-column text-editor-area">
+              <div className="App">
+             
+                <DraftEditor
+                  editorState={editorState}
+                  onEditorStateChange={handleEditorChange}
+                  wrapperClassName="wrapper-class"
+                  editorClassName="editor-class"
+                  toolbarClassName="toolbar-class"
+                />
+              </div>
+             
               <small className="align-self-start error-text">
                 {errors.levelDescription?.message}
               </small>
@@ -150,7 +196,7 @@ function CreateQuestion() {
 
               >
                 <small className="align-self-start error-text">
-                  {editorErrors.codeCpp ?? "xxx"}
+                  {editorErrors.codeCpp ?? ""}
                 </small>
                 <div>
                   C++
