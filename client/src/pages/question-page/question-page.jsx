@@ -297,9 +297,23 @@ function QuestionPage() {
                     style={{ width: "100%", height: "85%", padding: "8px" }}
                     disabled
                   >
-                    <h2>
-                      <Badge bg="secondary">{question ? question.levelName : ""}</Badge>
-                    </h2>
+                    <h4>
+                      {question ? question.levelName : ""}
+                    </h4>
+                    {question ? 
+                      (question.difficulty === "easy" ?  
+                        <h6 
+                          style={{ color: "green" }}
+                        >
+                      Easy
+                        </h6> : question.difficulty === "medium" ? 
+                          <h6 style={{ color: "orange" }}>
+                      Medium
+                          </h6> : 
+                          <h6 style={{ color: "red" }}>
+                      Hard
+                          </h6>): ""}
+                   
                     <hr 
                       className="solid"
                     />
