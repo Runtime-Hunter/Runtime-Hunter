@@ -7,7 +7,7 @@ import { getSubmissions, getSubmission, getUserSubmissions, getUserQuestionSubmi
 router.route('/api/submission').get(getSubmissions);
 router.route('/api/submission/:id').get(getSubmission);
 router.route('/api/submission/user').post(getUserSubmissions);
-router.route('/api/submission/userquestion').get(getUserQuestionSubmission);
+router.route('/api/submission/userquestion').post(getUserQuestionSubmission);
 router.route('/api/submission').post(addSubmission);
 
 export default router;
