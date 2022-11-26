@@ -1,10 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import Course from "../../components/course/course.jsx";
 import Layout from "../../components/layout/layout.jsx";
 
 
 function Courses() {
+  const { searchQuery } = useParams();
 
   const [list, setList] = useState();
 
@@ -16,7 +18,13 @@ function Courses() {
         const data = res.data;
         let courseList = [];
         data.forEach(course => {
-          courseList = courseList.concat(course)
+          if(!searchQuery || searchQuery == " "){
+            console.log("here")
+            courseList = courseList.concat(course)
+          }
+          else if((course.courseName).toLowerCase().includes(searchQuery.toLowerCase())){
+            courseList = courseList.concat(course)
+          }
         });
 
         console.log(courseList);
@@ -27,8 +35,9 @@ function Courses() {
 
 
   useEffect(() => {
+    console.log("Search Query",searchQuery)
     getCourses();
-  }, []);
+  },[searchQuery]);
   
   return (
     <Layout>
