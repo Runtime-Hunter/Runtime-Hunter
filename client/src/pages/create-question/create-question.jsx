@@ -23,7 +23,7 @@ import { ContentState, convertToRaw } from "draft-js";
 import { Editor as DraftEditor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "./create-question.css";
-import { convertToHTML } from "draft-convert";
+import draftToHtml from "draftjs-to-html";
 
 
 
@@ -66,7 +66,7 @@ function CreateQuestion() {
   }
 
   const convertContentToHTML = async () => {
-    let currentContentAsHTML = convertToHTML(editorState.getCurrentContent());
+    let currentContentAsHTML = draftToHtml(convertToRaw(editorState.getCurrentContent()));
     setConvertedContent(currentContentAsHTML);
   }
 
