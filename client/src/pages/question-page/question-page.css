@@ -79,8 +79,15 @@ color:#4f4949cd;
   text-align: left;
 }
 
+.codeBlock pre {
+  background-color: rgb(234, 234, 234);
+  padding: 5px;
+  border-radius: 2px;
+}
 .codeBlock code {
   color: black;
   background-color: rgb(234, 234, 234);
-  padding: 2px;
+}
+.codeBlock pre span {
+  background-color: rgb(234, 234, 234) !important;
 }
