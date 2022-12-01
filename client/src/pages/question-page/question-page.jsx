@@ -15,6 +15,7 @@ import Header from "../header/header";
 import { languageOptions } from "./languageOptions";
 import "./question-page.css";
 import CodeEditor from "@uiw/react-textarea-code-editor";
+import Canvas2 from "../../components/canvas/canvas";
 
 
 
@@ -459,6 +460,52 @@ function QuestionPage() {
           })) : ""} */}
         </Row>
 
+        <button
+          type="button"
+          className="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#staticBackdrop"
+        >
+  Launch static backdrop modal
+        </button>
+
+        <div
+          className="modal fade"
+          id="staticBackdrop"
+          data-bs-backdrop="static"
+          data-bs-keyboard="false"
+          tabIndex="-1"
+          aria-labelledby="staticBackdropLabel"
+          aria-hidden="true"
+        >
+          <div
+            style={{ width: "1500px" }}
+            className="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable game-modal"
+          >
+            <div className="modal-content">
+              <div className="modal-header">
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                >
+                </button>
+              </div>
+              <div className="modal-body">
+                <Canvas2></Canvas2>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  data-bs-dismiss="modal"
+                >Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </Container>
     </div>
   );
