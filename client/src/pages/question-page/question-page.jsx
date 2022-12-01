@@ -6,7 +6,7 @@ import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-python";
 import "prismjs/themes/prism.css"; //Example style, you can use another
 import React, { useCallback, useEffect, useState } from "react";
-import { Badge, Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import Editor from "react-simple-code-editor";
@@ -14,7 +14,7 @@ import { useStore } from "../../store/store";
 import Header from "../header/header";
 import { languageOptions } from "./languageOptions";
 import "./question-page.css";
-import DOMPurify from "dompurify";
+import CodeEditor from "@uiw/react-textarea-code-editor";
 
 
 
@@ -394,21 +394,30 @@ function QuestionPage() {
             <LanguagesDropdown
               onSelectChange={changeLang}
             /> 
-            <Editor
-              value={code}
-              onValueChange={code => saveCode(code)}
-              highlight={code => highlight(code, languages[lang.highlighter])}
-              padding={10}
-              style={{
-                height: "82%",
-                fontFamily: "'Fira code', 'Fira Mono', monospace",
-                fontSize: 12,
-                borderColor: "grey",
-                borderWidth: "0.5px",
-                borderStyle: "solid",
-                borderRadius: "4px",
-              }}
-            />
+            {/* <dark-mode
+              light="Light"
+              style={{ position: "fixed", top: 8, left: 10 }}
+            >
+            </dark-mode> */}
+            <div
+              className="App-editor"
+              data-color-mode="light"
+            >
+              <CodeEditor
+                autoFocus
+                value={code}
+                language={lang.value}
+                onChange={(evn) => setCode(evn.target.value)}
+                padding={15}
+                minHeight={"480px"}
+                minLength={"400px"}
+                style={{
+                  overflowWrap: "breakWord",
+                  fontSize: "14",
+                  fontFamily: "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                }}
+              />
+            </div>
             <Row>
               <Col>
                 <Button
