@@ -12,6 +12,7 @@ export async function signup(req, response) {
         password: req.body.password,
         userType: 1,
         gamesBeingPlayed: [],
+        favorites: [],
     };
 
     // hashing time
