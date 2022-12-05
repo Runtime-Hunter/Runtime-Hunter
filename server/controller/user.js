@@ -9,12 +9,8 @@ export async function getFavs(req, res) {
     // Get the user's favorites from the database
     const user = await users.findOne({ _id: ObjectId(req.body.userId) });
     // Get the details of each favorite item
-    const favorites = [];
-    for (const favoriteId of user.favorites) {
-        const courses = db.collection('courses');
-        const favorite = await courses.findOne({ _id: favoriteId });
-        favorites.push(favorite);
-    }
+    const courses = db.collection('courses');
+    const favorites = await courses.find({ _id: { $in: user.favorites } }).toArray();
 
     return res.json(favorites);
 }
