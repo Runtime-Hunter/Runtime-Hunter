@@ -6,13 +6,17 @@ import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-python";
 import "prismjs/themes/prism.css"; //Example style, you can use another
 import React, { useCallback, useEffect, useState } from "react";
-import { Badge, Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import Editor from "react-simple-code-editor";
 import { useStore } from "../../store/store";
 import Header from "../header/header";
 import { languageOptions } from "./languageOptions";
+import "./question-page.css";
+import CodeEditor from "@uiw/react-textarea-code-editor";
+
+
 
 function QuestionPage() {
   const [state] = useStore();
@@ -26,6 +30,8 @@ function QuestionPage() {
     languageOptions[0]
   );
 
+
+
   const [question, setQuestion] = useState();
   const [code, setCode] = useState(
     lang ? (localStorage.getItem(`${courseId}-${levelId}-${lang.value}`) ? localStorage.getItem(`${courseId}-${levelId}-${lang.value}`) : (question ? question.codeCpp : lang.default)) : languageOptions[0].default
@@ -33,6 +39,13 @@ function QuestionPage() {
   const [output, setOutput] = useState("");
   const [details, setDetails] = useState("");
   const [testcaseResults, setTestcaseResults] = useState([]);
+
+  // const createMarkup = (html) => {
+  //   return  {
+  //     __html: DOMPurify.sanitize(html)
+  //   }
+  // }
+  const [submissionHistory, setSubmissionHistory] = useState([])
 
   function changeLang(language) {
     setLang(language);
@@ -78,6 +91,10 @@ function QuestionPage() {
   }, [levelId])
 
   useEffect(() => {
+    getSubmissionHistory();
+  }, [code])
+
+  useEffect(() => {
     if (question) {
       setCode((lang.value == "python") ? question.codePy : question.codeCpp)
     }
@@ -97,6 +114,24 @@ function QuestionPage() {
     }).catch(err => console.log(err))
 
     return testcases;
+  }
+
+  async function getSubmissionHistory() {
+
+    const req_body = {
+      userId: currentUser._id,
+      levelId: levelId,
+    }
+    await axios.post(`${process.env.REACT_APP_URL}/api/submission/userquestion`, req_body)
+      .then(res => {
+        console.log("Submission History", res.data)
+        const sub_data = res.data
+        sub_data.sort((a,b) => (a.timeSubmitted < b.timeSubmitted) ? 1 : -1 )
+        setSubmissionHistory(sub_data)
+      })
+      .catch(err => {
+        console.log("Error while getting earlier submissions", err)
+      })
   }
  
   async function submit() {
@@ -158,6 +193,7 @@ function QuestionPage() {
         setOutput(resultOutput)
         console.log("Submission output: ",resultOutput)
         console.log("question output: ",testcases[i].output)
+        setOutput(testcases[i].output)
         const testcasResultStatus = (resultOutput === testcases[i].output ? true : false);
         setTestcaseResults([...testcaseResults, testcasResultStatus])
         const status = testcasResultStatus ? "Passed" : "Failed" 
@@ -194,71 +230,233 @@ function QuestionPage() {
 
   return (
     <div>
+      
       <Header />
-      <Container fluid>
-        <Row style={{ padding: "10px" }}>
+      <Container
+        fluid
+      >
+        <Row style={{ padding: "10px", overflow: "hidden" }}>
           <Col
-            style={{ height: "600px" }}
+            style={{ height: "600px", overflow: "scroll" }}
             xs={6}
           >
-            <h2>
-              <Badge bg="secondary">Question</Badge>
-            </h2>
-            <textarea
-              style={{ width: "100%", height: "50%", padding: "8px" }}
-              disabled
-              value={question ? question.levelDescription : ""}
-            />
+            <div>
+              <nav>
+                <div
+                  className="nav nav-tabs"
+                  id="nav-tab"
+                  role="tablist"
+                >
+                  <button
+                    className="nav-link active"
+                    id="nav-desc-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#nav-desc"
+                    type="button"
+                    role="tab"
+                    aria-controls="nav-desc"
+                    aria-selected="true"
+                    color='red'
+                  >Description
+                  </button>
+                  <button
+                    className="nav-link"
+                    id="nav-solution-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#nav-solution"
+                    type="button"
+                    role="tab"
+                    aria-controls="nav-solution"
+                    aria-selected="false"
+                  >Solution
+                  </button>
+                  <button
+                    className="nav-link"
+                    id="nav-submission-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#nav-submission"
+                    type="button"
+                    role="tab"
+                    aria-controls="nav-submission"
+                    aria-selected="false"
+                  >Submissions
+                  </button>
+                </div>
+              </nav>
+              <div
+                className="tab-content"
+                id="nav-tabContent"
+              >
+                <div
+                  className="tab-pane fade show active"
+                  id="nav-desc"
+                  role="tabpanel"
+                  aria-labelledby="nav-desc-tab"
+                >
+                  <div
+                    style={{ width: "100%", height: "85%", padding: "8px" }}
+                    disabled
+                  >
+                    <h4>
+                      {question ? question.levelName : ""}
+                    </h4>
+                    {question ? 
+                      (question.difficulty === "easy" ?  
+                        <h6 
+                          style={{ color: "green" }}
+                        >
+                      Easy
+                        </h6> : question.difficulty === "medium" ? 
+                          <h6 style={{ color: "orange" }}>
+                      Medium
+                          </h6> : 
+                          <h6 style={{ color: "red" }}>
+                      Hard
+                          </h6>): ""}
+                   
+                    <hr 
+                      className="solid"
+                    />
+                    {/* <div style={{ whiteSpace: "normal" }}>{question ? question.levelDescription : ""}</div> */}
+                    {question ?  <div
+                      className="codeBlock"
+                      dangerouslySetInnerHTML={{ __html: question.levelDescription }}
+                    />: "" }
+                  </div>
+                </div>
+                <div
+                  className="tab-pane fade"
+                  id="nav-solution"
+                  role="tabpanel"
+                  aria-labelledby="nav-solution-tab"
+                >
+                  <h3>Solution</h3>
+                </div>
+                <div
+                  className="tab-pane fade"
+                  id="nav-submission"
+                  role="tabpanel"
+                  aria-labelledby="nav-submission-tab"
+                >
+                  <div>
+
+                    {submissionHistory.length > 0 ?
+                      <table className='submissons-table'>
+                        <tr>
+                          <th>Submission Time</th>
+                          <th>Status</th>
+                          <th>Runtime</th>
+                          <th>Language</th>
+                        </tr>
+                        {
+                          submissionHistory.map(item => {
+                            return (
+                              <tr key={item._id}>
+                                <td>{`${item.timeSubmitted.slice(0,10)} ${item.timeSubmitted.slice(11,19)} `}</td>
+                                <td
+                                  style={
+                                    item.status ? 
+                                      { color: "green" } :
+                                      { color: "red" }
+
+                                  }
+                                >{item.status ? "Accepted" : "Failed"}
+                                </td>
+                                <td>{item.runtime * 1000} ms</td>
+                                <td>{item.language.label}</td>
+                              </tr>
+                            )
+                          })
+                        }
+
+                      </table>: <h6 style={{ marginTop: "25px" }}>You have no previous submission...</h6>
+         
+                    }
+                
+                  </div>
+                </div>
+              </div>
+
+            </div>
+           
           </Col>
-          <Col>
+          <Col
+            style={{ height: "88%", marginTop: "6%" }}
+            className={"questionPageDivider"}
+            xs={1}
+          >
+            
+          </Col>
+          <Col
+            style={{ overflow: "hidden" }}
+            xs={5}
+          >
             <LanguagesDropdown
               onSelectChange={changeLang}
             /> 
-            <Editor
-              value={code}
-              onValueChange={code => saveCode(code)}
-              highlight={code => highlight(code, languages[lang.highlighter])}
-              padding={10}
-              style={{
-                height: "50%",
-                fontFamily: "'Fira code', 'Fira Mono', monospace",
-                fontSize: 12,
-                borderColor: "grey",
-                borderWidth: "0.5px",
-                borderStyle: "solid",
-                borderRadius: "4px"
-              }}
-            />
-            <Button
+            {/* <dark-mode
+              light="Light"
+              style={{ position: "fixed", top: 8, left: 10 }}
+            >
+            </dark-mode> */}
+            <div
+              className="App-editor"
+              data-color-mode="light"
+            >
+              <CodeEditor
+                autoFocus
+                value={code}
+                language={lang.value}
+                onChange={(evn) => setCode(evn.target.value)}
+                padding={15}
+                minHeight={"480px"}
+                minLength={"400px"}
+                style={{
+                  overflowWrap: "breakWord",
+                  fontSize: "14",
+                  fontFamily: "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                }}
+              />
+            </div>
+            <Row>
+              <Col>
+                <Button
+                  style={{ marginTop: "10px", }}
+                  onClick={clearLocalStorage}
+                >Clear code
+                </Button>
+              </Col>
+              <Col>
+                <Button
               
-              style={{ marginTop: "10px", }}
-              onClick={clearLocalStorage}
-            >Clear code
-            </Button>
-            <Button
-              
-              style={{ marginTop: "10px", display: "flex", marginLeft: "auto"  }}
-              onClick={submit}
-            >Compile & Run
-            </Button>
-            <h2>
-              <Badge bg="secondary">Details:</Badge>
+                  style={{ marginTop: "10px", display: "flex", marginLeft: "auto"  }}
+                  onClick={submit}
+                >Compile & Run
+                </Button>
+              </Col>
+            </Row>
+            {/* <h2>
+              <Badge
+                bg="secondary"
+                style={{ marginTop: "10px", }}
+              >Details:
+              </Badge>
             </h2>
             <textarea
-              style={{ width: "100%", height: "50%", padding: "8px" }}
+              style={{ width: "100%", height: "23%", padding: "8px" }}
               disabled
               value={details}
-            />
+            /> */}
             
           </Col>
-          {(testcaseResults && testcaseResults.length > 0) ? (testcaseResults.map((result, index) => {
+          {/* {(testcaseResults && testcaseResults.length > 0) ? (testcaseResults.map((result, index) => {
             return(
               <p
                 key={index}
               > Testcase {testcaseResults.length} is passed
               </p>
             )
-          })) : "aaa"}
+          })) : ""} */}
         </Row>
 
       </Container>

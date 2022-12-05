@@ -16,6 +16,7 @@ import Landing from "./pages/landing/landing";
 import Login from "./pages/login/login";
 import QuestionPage from "./pages/question-page/question-page";
 import Signup from "./pages/signup/signup";
+import ProfilePage from "./pages/profile-page/profile-page";
 import { useStore } from "./store/store";
 function App() {
   const [state] = useStore();
@@ -60,7 +61,7 @@ function App() {
               element={<Navigate to="/home"/>}
             />
             <Route
-              path="/courses"
+              path="/courses/:searchQuery"
               element={<Courses />}
             />
             <Route
@@ -70,6 +71,10 @@ function App() {
             <Route
               path="/home"
               element={<Homepage />}
+            />
+            <Route
+              path="/profile"
+              element={<ProfilePage />}
             />
             <Route
               path="/"

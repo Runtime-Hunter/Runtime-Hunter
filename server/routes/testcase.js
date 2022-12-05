@@ -1,11 +1,11 @@
-const express = require("express");
-const router = express.Router();
+import { Router } from "express";
+const router = Router();
 
-const testcase = require("../controller/testcase");
+import { getTestcases, getTestcase, addTestcase } from "../controller/testcase.js";
 
 
-router.route('/api/testcase/:courseId/:levelId').get(testcase.getTestcases);
-router.route('/api/testcase/question/:levelId').get(testcase.getTestcase);
-router.route('/api/testcase/:courseId/:levelId').post(testcase.addTestcase);
+router.route('/api/testcase/:courseId/:levelId').get(getTestcases);
+router.route('/api/testcase/question/:levelId').get(getTestcase);
+router.route('/api/testcase/:courseId/:levelId').post(addTestcase);
 
-module.exports = router;
+export default router;
