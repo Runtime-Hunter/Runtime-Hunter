@@ -15,10 +15,12 @@ export async function getLevels(req, res) {
 }
 export async function getLevel(req, res) {
     let db_connect = getDb("runtime-hunter");
+
     db_connect.collection("courses")
-        .findOne({ "_id": ObjectId(req.params.courseId), "levels.levelId": ObjectId(req.params.levelId) })
+        .findOne({ "_id": ObjectId(req.params.courseId), "levels.levelId": req.params.levelId })
         .then((result) => {
             var level;
+            
             for (let i = 0; i < result.levels.length; i++) {
                 if ((result.levels[i].levelId).toString() == req.params.levelId) {
                     level = result.levels[i];
@@ -34,9 +36,10 @@ export async function addLevel(req, res) {
     let db_connect = getDb("runtime-hunter");
 
     let level = {
-        levelId: ObjectId(),
+        levelId: ObjectId().toString(),
         levelName: req.body.levelName,
         levelDescription: req.body.levelDescription,
+        levelIndex: req.body.levelIndex,
         codeCpp: req.body.inputCpp,
         codePy: req.body.inputPy,
         difficulty: req.body.difficulty,
@@ -53,7 +56,9 @@ export async function addLevel(req, res) {
             if (!result) {
                 db_connect.collection("courses").findOne({ "_id": ObjectId(req.body.courseId) }, function (req1, res1) {
                     var levels = res1.levels ? res1.levels : [];
-                    levels.push(level);
+                    (req.body.levelIndex > levels.length + 1) ?
+                        levels.splice(levels.length, 0, level) :
+                        levels.splice(req.body.levelIndex, 0, level)
 
                     db_connect.collection("courses").updateOne({ "_id": ObjectId(req.body.courseId) }, { $set: { "levels": levels } }, function (err, response) {
                         if (err)

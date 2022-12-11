@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { AiOutlineHeart } from "react-icons/ai";
 import { FcLike } from "react-icons/fc";
 import { useNavigate, useParams } from "react-router-dom";
@@ -31,13 +31,15 @@ function CoursePage() {
   //   getLevels();
   // }, [])
 
+  const dragItem = useRef();
+  const dragOverItem = useRef();
   const [state, dispatch] = useStore();
   const { user: currentUser } = state;
-
+  const [levelShouldOpen, setLevelShouldOpen] = useState(false);
   const { courseId } = useParams();
   const [course, setCourse] = useState();
   const [levels, setLevels] = useState();
-
+  const [lastSolvedIdx, setLastSolvedIdx] = useState(0);
   const [isFav, setIsFav] = useState(false);
 
   const navigate = useNavigate()
@@ -112,42 +114,38 @@ function CoursePage() {
     navigate(`/${courseId}/createQuestion`);
   }
 
+  const listLevels = (levels) => {
+    let lastSolvedIdx = 0;
+    const correctlySolvedQuestions = currentUser.correctlySolvedQuestions;
 
-  // useEffect(() => {
-  //   if (course) {
-  //     let courseItem = {
-  //       courseId: course.courseId,
-  //       name: course.courseName,
-  //       university: course.university
-  //     };
-  //     let recent_courses = localStorage.getItem("recentCourses");
+    levels.map((item, index)=> {
 
-  //     if (recent_courses) {
-  //       console.log("bb");
-  //       let arr_recent_courses = JSON.parse(recent_courses);
-  //       let flag = false;
-  //       for (let i = 0; i < arr_recent_courses.length; i++) {
-  //         if (arr_recent_courses[i].courseId === courseItem.courseId &&
-  //           arr_recent_courses[i].university === courseItem.university &&
-  //           arr_recent_courses[i].name === courseItem.name) {
-  //           flag = true;
-  //           break;
-  //         }
-  //       }
-  //       if (!flag) {
-  //         arr_recent_courses.push(courseItem);
-  //         if (arr_recent_courses.length == 5) {
-  //           arr_recent_courses = arr_recent_courses.slice(1,5);
-  //         }
-  //       }
-  //       localStorage.setItem("recentCourses", JSON.stringify(arr_recent_courses));
-  //     }
-  //     else {
-  //       localStorage.setItem("recentCourses", JSON.stringify([courseItem]));
-  //       console.log(JSON.stringify([courseItem]));
-  //     }
-  //   }
-  // }, [course]);
+      if ((correctlySolvedQuestions && correctlySolvedQuestions.includes(item.levelId)) || index == 0) {
+        lastSolvedIdx = index;
+      }
+    });
+
+    return levels.map((item,index) => {
+
+      return (
+        
+        <div
+          key={index}
+          className="row"
+        >
+          <Level
+            courseId={courseId}
+            levelId={item.levelId}
+            levelName={item.levelName}
+            levelTags={item.levelTags ?? ""}
+            difficulty={item.difficulty}
+            unlock={((lastSolvedIdx > 0 && index <= lastSolvedIdx + 1) || (lastSolvedIdx == 0 && index == 0)) ? true : false}
+            key={index}
+          />
+        </div>
+      )
+    })
+  }
 
 
   useEffect(() => {
@@ -202,23 +200,7 @@ function CoursePage() {
             <div className="row mt-4">
               <h4>Levels</h4>
               {levels != undefined ?
-                levels.map((item,index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="row"
-                    >
-                      <Level
-                        courseId={courseId}
-                        levelId={item.levelId}
-                        levelName={item.levelName}
-                        levelTags={item.levelTags ?? ""}
-                        difficulty={item.difficulty}
-                      />
-
-                    </div>
-                  );
-                })              :
+                listLevels(levels)            :
                 <p>No file found for this course</p>
               }
             </div>
