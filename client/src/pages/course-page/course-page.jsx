@@ -51,7 +51,7 @@ function CoursePage() {
         await axios
           .get(`${process.env.REACT_APP_URL}/api/course/${courseId}`)
           .then((res) => {
-            if(res.data !== null){
+            if (res.data !== null) {
               setCourse(res.data);
               var levelsArrEasy = [];
               var levelsArrMedium = [];
@@ -65,31 +65,31 @@ function CoursePage() {
               setLevels([...levelsArrEasy, ...levelsArrMedium, ...levelsArrHard]);
 
             }
-            else{
+            else {
               navigate("/error");
             }
           })
           .catch((err) => {
             console.log("Error:", err);
-          // setErrorMessage("Error! Please try again.");
-          })
+            // setErrorMessage("Error! Please try again.");
+          });
+
+        const favs = await axios.get(`${process.env.REACT_APP_URL}/api/user/favorites`, { params: { userId: currentUser._id } })
+
+        setIsFav(favs.data.map(x => x._id).includes(courseId))
       }
     },
     [courseId, navigate],
   )
 
   const addToFav = async () => {
-    if(isFav) {
+    if (isFav) {
       return;
     }
-    await axios.post(`${process.env.REACT_APP_URL}/courses/addToFav`,
-      { email:currentUser.email, courseId:courseId, courseName:course.courseName })
+    await axios.post(`${process.env.REACT_APP_URL}/api/user/favorites`,
+      { userId: currentUser._id, courseId: courseId })
       .then(res => {
-        console.log(res.data);
-
         setIsFav(true);
-        dispatch(userLogin(res.data))
-
       })
       .catch(err => {
         console.log(err);
@@ -97,13 +97,10 @@ function CoursePage() {
   }
 
   const removeFromFav = async () => {
-    await axios.post(`${process.env.REACT_APP_URL}/api/courses/removeFromFav`,
-      { email:currentUser.email, courseId:courseId })
+    await axios.delete(`${process.env.REACT_APP_URL}/api/user/favorites`,
+      { data: { userId: currentUser._id, courseId: courseId } })
       .then(res => {
-        console.log(res);
         setIsFav(false);
-        dispatch(userLogin(res.data))
-
       })
       .catch(err => {
         console.log(err);
@@ -167,7 +164,7 @@ function CoursePage() {
                   onClick={removeFromFav}
                   className='favIcon'
                   size={32}
-                />                      :
+                /> :
 
                   <AiOutlineHeart
                     className='favIcon'
@@ -185,27 +182,29 @@ function CoursePage() {
               </div>
               {course.creatorId == currentUser._id &&
 
-              <div
-                className="col-2 align-self-center"
-              >
-                <button
-                  onClick={addLevel}
-                  className="search-bar-button"
-                >Add level
-                </button>
-              </div>
+                <div
+                  className="col-2 align-self-center"
+                >
+                  <button
+                    onClick={addLevel}
+                    className="search-bar-button"
+                  >Add level
+                  </button>
+                </div>
               }
             </div>
 
             <div className="row mt-4">
               <h4>Levels</h4>
               {levels != undefined ?
+
                 listLevels(levels)            :
+
                 <p>No file found for this course</p>
               }
             </div>
-          </div> 
-        </div>     :
+          </div>
+        </div> :
         <p>Loading...</p>
       }
     </Layout>

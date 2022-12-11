@@ -1,78 +1,39 @@
-import pkg from "bcryptjs";
-const { compare, hash } = pkg;
 import { getDb } from "../db/conn.js";
+import { ObjectId } from "mongodb";
 
+export async function getFavs(req, res) {
+    let db = getDb("runtime-hunter");
 
-export async function signup(req, response) {
-  let db_connect = getDb("runtime-hunter");
+    const users = db.collection('users');
+    // Get the user's favorites from the database
+    const user = await users.findOne({ _id: ObjectId(req.query.userId) });
+    if (user == null) return res.status(400).send()
+    // Get the details of each favorite item
+    const courses = db.collection('courses');
+    const favorites = await courses.find({ _id: { $in: user.favorites } }).toArray();
 
-  let user = {
-    username: req.body.username,
-    email: req.body.email,
-    password: req.body.password,
-    userType: 1,
-    gamesBeingPlayed: [],
-  };
-
-  // hashing time
-  const saltRounds = 10;
-
-  // encrypting the password
-  genSalt(saltRounds, function (saltError, salt) {
-    if (saltError) {
-      return saltError;
-    } else {
-      hash(req.body.password, salt, function (hashError, _hash) {
-        if (hashError) {
-          return hashError;
-        }
-
-        user.password = _hash;
-
-        // inserting to users collection after hashing
-        db_connect.collection("users").find({ "email": req.body.email }).toArray()
-          .then((result) => {
-            if (result.length === 0) {
-              db_connect.collection("users").insertOne(user, function (err, res) {
-                if (err)
-                  throw err;
-                return response.json(res);
-              });
-            }
-            else {
-              return response.json({ message: 'This email has already been used!' });
-            }
-          });
-      });
-    }
-  });
-
+    return res.json(favorites);
 }
-export async function login(req, res) {
-  let db_connect = getDb("runtime-hunter");
-  let myquery = { "email": req.params.email };
-  let currUser = req.body.data.user;
-  db_connect
-    .collection("users")
-    .findOne(myquery, async (err, result) => {
-      if (err)
-        console.log(err.message);
+export async function addToFavs(req, res) {
+    let db = getDb("runtime-hunter");
 
-      if (result) {
-        const validPassword = await compare(currUser.password, result.password);
-        if (validPassword) {
-          return res.status(200).json(result);
-        } else {
-          return res.status(200).json({ message: "Invalid Password" });
-        }
-      }
-      else {
-        return res.status(200).json({ message: "Invalid E-mail" });
-      }
-    });
+    const users = db.collection('users');
+    console.log(req.body)
+    // Add the item to the user's favorites in the database
+    const newFavorite = await users.updateOne(
+        { _id: ObjectId(req.body.userId) },
+        { $addToSet: { favorites: ObjectId(req.body.courseId) } }
+    );
+    res.status(200).send();
 }
-export function getCorrectlySolvedQuestions(req, res) {
-  let userId = req.params.userId;
+export async function removeFromFavs(req, res) {
+    let db = getDb("runtime-hunter");
+    const users = db.collection('users');
 
-  db_connect.collection("users").findOne();
+    // Remove the item from the user's favorites in the database
+    const r = await users.updateOne(
+        { _id: ObjectId(req.body.userId) },
+        { $pull: { favorites: ObjectId(req.body.courseId) } }
+    );
+    res.status(204).send();
 }
