@@ -31,6 +31,7 @@ const createQuestionSchema = z
   .object({
     levelName: z.string().nonempty(),
     levelTags: z.string().nonempty(),
+    levelPosition: z.string().nonempty(),
     difficulty: z.string().nonempty(),
   });
 
@@ -102,6 +103,7 @@ function CreateQuestion() {
       levelTags: data.levelTags,
       levelDescription: convertedContent,
       difficulty: data.difficulty,
+      levelIndex: data.levelIndex,
       testCases: data.testCases,
       courseId,
       inputCpp: codeCpp,
@@ -182,6 +184,20 @@ function CreateQuestion() {
                 {errors.difficulty?.message}
               </small>
             </div>  
+
+            <div className="mt-3 d-flex flex-column">
+              <input
+                {...register("levelIndex")}
+                className="btn-border input-style form-control"
+                placeholder="Position of Question"
+                type="text"
+              >
+              </input>
+              <small className="align-self-start error-text">
+                {errors.levelIndex?.message}
+              </small>
+    
+            </div>
    
             <Row>
               <label

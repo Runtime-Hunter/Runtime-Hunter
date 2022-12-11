@@ -1,12 +1,14 @@
 
 import PropTypes from "prop-types";
-import { Badge } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Badge, NavItem } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { useStore } from "../../store/store";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../level/level.scss";
 
 // eslint-disable-next-line react/prop-types
-function Level({ courseId, levelId, levelName, levelTags, difficulty }) {
+function Level({ courseId, levelId, levelName, levelTags, difficulty, unlock }) {
 
   const navigate = useNavigate();
 
@@ -28,6 +30,7 @@ function Level({ courseId, levelId, levelName, levelTags, difficulty }) {
     }
   }
 
+
   const difficulties = {
     "easy": { color: "success", label: "Easy" },
     "medium": { color: "warning", label: "Medium" },
@@ -38,25 +41,45 @@ function Level({ courseId, levelId, levelName, levelTags, difficulty }) {
     <div>
       <div className="col-12 mb-1 btn btn-block btn-outline-success course-button">
         <div className="row justify-content-between">
+         
           <div
             className="col-8 courseName"
           >
+            { unlock || currentUser.userType == 2 ?
+              <a
+                className="text-start course-link"
+                onClick={(e) => goToLevel(e)}
+              >
+                <h4>
+                  <Badge bg={difficulties[difficulty].color}>
+                    {difficulties[difficulty].label}
+                  </Badge>
+                  <span className="mx-2">{levelName}</span>
+                </h4>
+                <h5 className="mt-2">{levelTags}</h5>
 
-            <a
-              className="text-start course-link"
-              onClick={(e) => goToLevel(e)}
-            >
-              <h4>
-                <Badge bg={difficulties[difficulty].color}>
-                  {difficulties[difficulty].label}
-                </Badge>
-                <span className="mx-2">{levelName}</span>
-              </h4>
-              <h5 className="mt-2">{levelTags}</h5>
-
-            </a>
-
+              </a>                          :
+              <p
+                className="text-start"
+                style={{ textDecoration: "none" }}
+              >
+                <h4>
+                  <Badge bg={difficulties[difficulty].color}>
+                    {difficulties[difficulty].label}
+                  </Badge>
+                  <span className="mx-2">{levelName}</span>
+                </h4>
+                <h5 className="mt-2">{levelTags}</h5>
+              </p>
+            }
           </div>
+            
+          { !unlock && currentUser.userType != 2 && 
+          <div className="col-2 align-self-center"><i
+            className='fa-solid fa-lock'
+          />
+          </div>}
+
           {currentUser.userType == 2 &&
             <div
               className="col-2 align-self-center"
