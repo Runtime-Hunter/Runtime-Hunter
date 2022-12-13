@@ -42,7 +42,6 @@
     "react-scripts": "5.0.1",
     "react-select": "^5.5.4",
     "react-simple-code-editor": "^0.13.1",
-    "react-sortable-hoc": "^2.0.0",
     "sass": "^1.55.0",
     "slate": "^0.86.0",
     "slate-react": "^0.86.0",

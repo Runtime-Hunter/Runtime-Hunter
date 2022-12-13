@@ -1,29 +1,27 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router";
-import { z } from "zod";
-import Footer from "../footer/footer.jsx";
-import Header from "../header/header.jsx";
-import Editor from "react-simple-code-editor";
-import { highlight, languages } from "prismjs/components/prism-core";
-import { languageOptions } from "./../question-page/languageOptions";
+import { convertToRaw, EditorState } from "draft-js";
+import "draft-js/dist/Draft.css";
+import draftToHtml from "draftjs-to-html";
 import "prismjs/components/prism-clike";
+import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-python";
 import "prismjs/themes/prism.css"; //Example style, you can use another
-import "./create-question.css";
+import React, { useState } from "react";
 import { Col, Row } from "react-bootstrap";
-import { EditorState } from "draft-js";
-import "draft-js/dist/Draft.css";
-import { ContentState, convertToRaw } from "draft-js";
 import { Editor as DraftEditor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
+import { useParams } from "react-router-dom";
+import Editor from "react-simple-code-editor";
+import { z } from "zod";
+import Footer from "../footer/footer.jsx";
+import Header from "../header/header.jsx";
+import { languageOptions } from "./../question-page/languageOptions";
 import "./create-question.css";
-import draftToHtml from "draftjs-to-html";
 
 
 
@@ -42,11 +40,15 @@ function CreateQuestion() {
   const navigate = useNavigate();
   const { courseId } = useParams();
 
-  const [editorState, setEditorState] = useState(
+  const [descEditorState, setDescEditorState] = useState(
+    () => EditorState.createEmpty(),
+  );
+  const [solutionEditorState, setSolutionEditorState] = useState(
     () => EditorState.createEmpty(),
   );
 
-  const  [convertedContent, setConvertedContent] = useState(null);
+  const  [descConvertedContent, setDescConvertedContent] = useState(null);
+  const  [solutionConvertedContent, setSolutionConvertedContent] = useState(null);
   
   const [editorErrors, setEditorErrors] = useState({ codeCpp: "", codePy: "" })
 
@@ -61,17 +63,25 @@ function CreateQuestion() {
     setCodePy(code);
   }
 
-  const handleEditorChange = (state) => {
-    setEditorState(state);
-    convertContentToHTML();
+  const handleDescEditorChange = (state) => {
+    setDescEditorState(state);
+    convertDescContentToHTML();
   }
 
-  const convertContentToHTML = async () => {
-    let currentContentAsHTML = draftToHtml(convertToRaw(editorState.getCurrentContent()));
-    setConvertedContent(currentContentAsHTML);
+  const handleSolutionEditorChange = (state) => {
+    setSolutionEditorState(state);
+    convertSolutionContentToHTML();
   }
 
-  
+  const convertDescContentToHTML = async () => {
+    let currentContentAsHTML = draftToHtml(convertToRaw(descEditorState.getCurrentContent()));
+    setDescConvertedContent(currentContentAsHTML);
+  }
+
+  const convertSolutionContentToHTML = async () => {
+    let currentContentAsHTML = draftToHtml(convertToRaw(solutionEditorState.getCurrentContent()));
+    setSolutionConvertedContent(currentContentAsHTML);
+  }
 
 
   const {
@@ -84,7 +94,9 @@ function CreateQuestion() {
   });
 
   const onSubmit = async (data) => {
-    await convertContentToHTML();
+    console.log("hello")
+    await convertDescContentToHTML();
+    await convertSolutionContentToHTML();
     
     if (codeCpp === languageOptions[0].default || codeCpp === "") {
       setEditorErrors(editorErrors => ({ ...editorErrors, codeCpp: "Cpp code should not be empty or default" }));
@@ -101,7 +113,8 @@ function CreateQuestion() {
     const level = {
       levelName: data.levelName,
       levelTags: data.levelTags,
-      levelDescription: convertedContent,
+      levelDescription: descConvertedContent,
+      levelSolution: solutionConvertedContent,
       difficulty: data.difficulty,
       levelIndex: data.levelIndex,
       testCases: data.testCases,
@@ -150,12 +163,13 @@ function CreateQuestion() {
               </small>
     
             </div>
-            <div className="mt-3 d-flex flex-column text-editor-area">
+            <div className="mt-5 d-flex flex-column text-editor-area">
+              <h5>Description</h5>
               <div className="App">
              
                 <DraftEditor
-                  editorState={editorState}
-                  onEditorStateChange={handleEditorChange}
+                  editorState={descEditorState}
+                  onEditorStateChange={handleDescEditorChange}
                   wrapperClassName="wrapper-class"
                   editorClassName="editor-class"
                   toolbarClassName="toolbar-class"
@@ -166,6 +180,25 @@ function CreateQuestion() {
                 {errors.levelDescription?.message}
               </small>
             </div>
+
+            <div className="mt-5 d-flex flex-column text-editor-area">
+              <h5>Solution</h5>
+              <div className="App">
+             
+                <DraftEditor
+                  editorState={solutionEditorState}
+                  onEditorStateChange={handleSolutionEditorChange}
+                  wrapperClassName="wrapper-class"
+                  editorClassName="editor-class"
+                  toolbarClassName="toolbar-class"
+                />
+              </div>
+             
+              <small className="align-self-start error-text">
+                {errors.levelDescription?.message}
+              </small>
+            </div>
+
             <div className="mt-3 d-flex flex-column">
         
               <label htmlFor="difficulty">Difficulty:</label>
