@@ -1,15 +1,9 @@
 import axios from "axios";
 import { encode as base64_encode } from "base-64";
-import "prismjs/components/prism-clike";
-import { highlight, languages } from "prismjs/components/prism-core";
-import "prismjs/components/prism-javascript";
-import "prismjs/components/prism-python";
-import "prismjs/themes/prism.css"; //Example style, you can use another
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
-import Editor from "react-simple-code-editor";
 import { useStore } from "../../store/store";
 import Header from "../header/header";
 import { languageOptions } from "./languageOptions";
@@ -57,8 +51,8 @@ function QuestionPage() {
     localStorage.setItem(`${courseId}-${levelId}-${lang.value}`, code);
   }
 
-  function clearLocalStorage(){
-    if(courseId && levelId && lang){
+  function clearLocalStorage() {
+    if (courseId && levelId && lang) {
       localStorage.removeItem(`${courseId}-${levelId}-${lang.value}`)
       setCode(lang.value === "python" ? question.codePy : question.codeCpp)
     }
@@ -70,11 +64,11 @@ function QuestionPage() {
         await axios
           .get(`${process.env.REACT_APP_URL}/api/level/${courseId}/${levelId}`)
           .then((res) => {
-            if(res.data !== null){
+            if (res.data !== null) {
               console.log(res.data);
               setQuestion(res.data);
             }
-            else{
+            else {
               navigate("/error");
             }
           })
@@ -100,7 +94,7 @@ function QuestionPage() {
     }
   }, [question])
 
- 
+
 
   async function getTestcases() {
 
@@ -126,14 +120,14 @@ function QuestionPage() {
       .then(res => {
         console.log("Submission History", res.data)
         const sub_data = res.data
-        sub_data.sort((a,b) => (a.timeSubmitted < b.timeSubmitted) ? 1 : -1 )
+        sub_data.sort((a, b) => (a.timeSubmitted < b.timeSubmitted) ? 1 : -1)
         setSubmissionHistory(sub_data)
       })
       .catch(err => {
         console.log("Error while getting earlier submissions", err)
       })
   }
- 
+
   async function submit() {
     setOutput("");
     setDetails("Creating submission...\n");
@@ -150,7 +144,7 @@ function QuestionPage() {
         const formData = {
           "language_id": lang.id,
           "source_code": base64_encode(code),
-          ...( testcases[i].input !== "" && { "stdin": base64_encode(testcases[i].input) }),
+          ...(testcases[i].input !== "" && { "stdin": base64_encode(testcases[i].input) }),
           // "expected_output": encode(testcases[i].output),
         };
 
@@ -183,7 +177,7 @@ function QuestionPage() {
             },
           }
         );
-    
+
         const subResult = await submissionResult.json();
         console.log(subResult);
         // const testcasResultStatus = (parseInt(subResult.stdout) === parseInt(testcases[i].output) ? true : false);
@@ -191,17 +185,17 @@ function QuestionPage() {
         let resultOutput = subResult.stdout
         resultOutput = resultOutput.trim()
         setOutput(resultOutput)
-        console.log("Submission output: ",resultOutput)
-        console.log("question output: ",testcases[i].output)
+        console.log("Submission output: ", resultOutput)
+        console.log("question output: ", testcases[i].output)
         setOutput(testcases[i].output)
         const testcasResultStatus = (resultOutput === testcases[i].output ? true : false);
         setTestcaseResults([...testcaseResults, testcasResultStatus])
-        const status = testcasResultStatus ? "Passed" : "Failed" 
+        const status = testcasResultStatus ? "Passed" : "Failed"
         setDetails((oldDetail) => oldDetail + "\n" + "Input: " + testcases[i].input + " - Output: " + subResult.stdout + " => Result: " + status + "\n");
 
         let submission = {
           userId: currentUser._id,
-          courseId: courseId,     
+          courseId: courseId,
           levelId: levelId,
           timeSubmitted: new Date(Date.now()).toISOString(),
           status: testcasResultStatus,
@@ -220,7 +214,7 @@ function QuestionPage() {
             console.log("Error while adding submission to db", err)
           })
       }
-      setDetails((oldDetail) => oldDetail.replace("Creating submission...", "All tests finished") );
+      setDetails((oldDetail) => oldDetail.replace("Creating submission...", "All tests finished"));
       console.log("Testcase res: ", testcaseResults);
     }).catch(err => {
       console.log("Error: ", err);
@@ -230,7 +224,7 @@ function QuestionPage() {
 
   return (
     <div>
-      
+
       <Header />
       <Container
         fluid
@@ -300,28 +294,28 @@ function QuestionPage() {
                     <h4>
                       {question ? question.levelName : ""}
                     </h4>
-                    {question ? 
-                      (question.difficulty === "easy" ?  
-                        <h6 
+                    {question ?
+                      (question.difficulty === "easy" ?
+                        <h6
                           style={{ color: "green" }}
                         >
-                      Easy
-                        </h6> : question.difficulty === "medium" ? 
+                          Easy
+                        </h6> : question.difficulty === "medium" ?
                           <h6 style={{ color: "orange" }}>
-                      Medium
-                          </h6> : 
+                            Medium
+                          </h6> :
                           <h6 style={{ color: "red" }}>
-                      Hard
-                          </h6>): ""}
-                   
-                    <hr 
+                            Hard
+                          </h6>) : ""}
+
+                    <hr
                       className="solid"
                     />
                     {/* <div style={{ whiteSpace: "normal" }}>{question ? question.levelDescription : ""}</div> */}
-                    {question ?  <div
+                    {question ? <div
                       className="codeBlock"
                       dangerouslySetInnerHTML={{ __html: question.levelDescription }}
-                    />: "" }
+                    /> : ""}
                   </div>
                 </div>
                 <div
@@ -352,10 +346,10 @@ function QuestionPage() {
                           submissionHistory.map(item => {
                             return (
                               <tr key={item._id}>
-                                <td>{`${item.timeSubmitted.slice(0,10)} ${item.timeSubmitted.slice(11,19)} `}</td>
+                                <td>{`${item.timeSubmitted.slice(0, 10)} ${item.timeSubmitted.slice(11, 19)} `}</td>
                                 <td
                                   style={
-                                    item.status ? 
+                                    item.status ?
                                       { color: "green" } :
                                       { color: "red" }
 
@@ -369,23 +363,23 @@ function QuestionPage() {
                           })
                         }
 
-                      </table>: <h6 style={{ marginTop: "25px" }}>You have no previous submission...</h6>
-         
+                      </table> : <h6 style={{ marginTop: "25px" }}>You have no previous submission...</h6>
+
                     }
-                
+
                   </div>
                 </div>
               </div>
 
             </div>
-           
+
           </Col>
           <Col
             style={{ height: "88%", marginTop: "6%" }}
             className={"questionPageDivider"}
             xs={1}
           >
-            
+
           </Col>
           <Col
             style={{ overflow: "hidden" }}
@@ -393,7 +387,7 @@ function QuestionPage() {
           >
             <LanguagesDropdown
               onSelectChange={changeLang}
-            /> 
+            />
             {/* <dark-mode
               light="Light"
               style={{ position: "fixed", top: 8, left: 10 }}
@@ -428,8 +422,8 @@ function QuestionPage() {
               </Col>
               <Col>
                 <Button
-              
-                  style={{ marginTop: "10px", display: "flex", marginLeft: "auto"  }}
+
+                  style={{ marginTop: "10px", display: "flex", marginLeft: "auto" }}
                   onClick={submit}
                 >Compile & Run
                 </Button>
@@ -447,7 +441,7 @@ function QuestionPage() {
               disabled
               value={details}
             /> */}
-            
+
           </Col>
           {/* {(testcaseResults && testcaseResults.length > 0) ? (testcaseResults.map((result, index) => {
             return(

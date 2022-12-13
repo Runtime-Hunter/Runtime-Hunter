@@ -4,11 +4,6 @@ import axios from "axios";
 import { convertToRaw, EditorState } from "draft-js";
 import "draft-js/dist/Draft.css";
 import draftToHtml from "draftjs-to-html";
-import "prismjs/components/prism-clike";
-import { highlight, languages } from "prismjs/components/prism-core";
-import "prismjs/components/prism-javascript";
-import "prismjs/components/prism-python";
-import "prismjs/themes/prism.css"; //Example style, you can use another
 import React, { useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { Editor as DraftEditor } from "react-draft-wysiwyg";
@@ -16,12 +11,12 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { useParams } from "react-router-dom";
-import Editor from "react-simple-code-editor";
 import { z } from "zod";
 import Footer from "../footer/footer.jsx";
 import Header from "../header/header.jsx";
 import { languageOptions } from "./../question-page/languageOptions";
 import "./create-question.css";
+import CodeEditor from "@uiw/react-textarea-code-editor";
 
 
 
@@ -47,9 +42,9 @@ function CreateQuestion() {
     () => EditorState.createEmpty(),
   );
 
-  const  [descConvertedContent, setDescConvertedContent] = useState(null);
-  const  [solutionConvertedContent, setSolutionConvertedContent] = useState(null);
-  
+  const [descConvertedContent, setDescConvertedContent] = useState(null);
+  const [solutionConvertedContent, setSolutionConvertedContent] = useState(null);
+
   const [editorErrors, setEditorErrors] = useState({ codeCpp: "", codePy: "" })
 
   const [codeCpp, setCodeCpp] = useState(languageOptions[0].default);
@@ -97,7 +92,7 @@ function CreateQuestion() {
     console.log("hello")
     await convertDescContentToHTML();
     await convertSolutionContentToHTML();
-    
+
     if (codeCpp === languageOptions[0].default || codeCpp === "") {
       setEditorErrors(editorErrors => ({ ...editorErrors, codeCpp: "Cpp code should not be empty or default" }));
     }
@@ -130,10 +125,10 @@ function CreateQuestion() {
 
     }).catch(err => console.log(err))
   };
-  
+
   return (
     <div>
-      <Header/>
+      <Header />
       <div className="dashedBorder mt-5">
         <div className="uploadContent">
           <div className="card-body">
@@ -148,7 +143,7 @@ function CreateQuestion() {
               <small className="align-self-start error-text">
                 {errors.levelName?.message}
               </small>
-    
+
             </div>
             <div className="mt-3 d-flex flex-column">
               <input
@@ -161,12 +156,12 @@ function CreateQuestion() {
               <small className="align-self-start error-text">
                 {errors.levelName?.message}
               </small>
-    
+
             </div>
             <div className="mt-5 d-flex flex-column text-editor-area">
               <h5>Description</h5>
               <div className="App">
-             
+
                 <DraftEditor
                   editorState={descEditorState}
                   onEditorStateChange={handleDescEditorChange}
@@ -175,7 +170,7 @@ function CreateQuestion() {
                   toolbarClassName="toolbar-class"
                 />
               </div>
-             
+
               <small className="align-self-start error-text">
                 {errors.levelDescription?.message}
               </small>
@@ -184,7 +179,7 @@ function CreateQuestion() {
             <div className="mt-5 d-flex flex-column text-editor-area">
               <h5>Solution</h5>
               <div className="App">
-             
+
                 <DraftEditor
                   editorState={solutionEditorState}
                   onEditorStateChange={handleSolutionEditorChange}
@@ -193,18 +188,18 @@ function CreateQuestion() {
                   toolbarClassName="toolbar-class"
                 />
               </div>
-             
+
               <small className="align-self-start error-text">
                 {errors.levelDescription?.message}
               </small>
             </div>
 
             <div className="mt-3 d-flex flex-column">
-        
+
               <label htmlFor="difficulty">Difficulty:</label>
 
-              <select 
-                name="difficulty" 
+              <select
+                name="difficulty"
                 id="difficulty"
                 {...register("difficulty")}
               >
@@ -216,7 +211,7 @@ function CreateQuestion() {
               <small className="align-self-start error-text">
                 {errors.difficulty?.message}
               </small>
-            </div>  
+            </div>
 
             <div className="mt-3 d-flex flex-column">
               <input
@@ -229,9 +224,9 @@ function CreateQuestion() {
               <small className="align-self-start error-text">
                 {errors.levelIndex?.message}
               </small>
-    
+
             </div>
-   
+
             <Row>
               <label
                 htmlFor="difficulty"
@@ -250,22 +245,21 @@ function CreateQuestion() {
                 <div>
                   C++
                 </div>
-                <Editor
+                <CodeEditor
+                  autoFocus
                   value={codeCpp}
-                  onValueChange={code => saveCodeCpp(code)}
-                  highlight={code => highlight(code, languages[languageOptions[0].highlighter])}
-                  padding={10}
+                  language={"cpp"}
+                  onChange={(evn) => saveCodeCpp(evn.target.value)}
+                  padding={15}
+                  minHeight={"480px"}
+                  minLength={"400px"}
                   style={{
-                    height: "100%",
-                    fontFamily: "'Fira code', 'Fira Mono', monospace",
-                    fontSize: 12,
-                    borderColor: "grey",
-                    borderWidth: "0.5px",
-                    borderStyle: "solid",
-                    borderRadius: "4px"
+                    overflowWrap: "breakWord",
+                    fontSize: "14",
+                    fontFamily: "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
                   }}
                 />
-              </Col>            
+              </Col>
 
               <Col
                 style={{ height: "600px", padding: "20px" }}
@@ -278,24 +272,21 @@ function CreateQuestion() {
                   Python
                 </div>
 
-                <Editor
-                  {...register("codePy")}
-
+                <CodeEditor
+                  autoFocus
                   value={codePy}
-                  onValueChange={code => saveCodePy(code)}
-                  highlight={codePy => highlight(codePy, languages[languageOptions[1].highlighter])}
-                  padding={10}
+                  language={"python"}
+                  onChange={(evn) => saveCodePy(evn.target.value)}
+                  padding={15}
+                  minHeight={"480px"}
+                  minLength={"400px"}
                   style={{
-                    height: "100%",
-                    fontFamily: "'Fira code', 'Fira Mono', monospace",
-                    fontSize: 12,
-                    borderColor: "grey",
-                    borderWidth: "0.5px",
-                    borderStyle: "solid",
-                    borderRadius: "4px"
+                    overflowWrap: "breakWord",
+                    fontSize: "14",
+                    fontFamily: "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
                   }}
                 />
-              </Col>         
+              </Col>
             </Row>
             <button
               className="btn col-2 uploadBtn"
@@ -303,16 +294,16 @@ function CreateQuestion() {
               styles={{ display: "none" }}
               onClick={handleSubmit(onSubmit)}
             >
-              <span className="uploadBtnText"> 
-                Create Question 
+              <span className="uploadBtnText">
+                Create Question
               </span>
-            </button> 
+            </button>
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
-    
+
   );
 }
 
