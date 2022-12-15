@@ -1,29 +1,22 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import { convertToRaw, EditorState } from "draft-js";
+import "draft-js/dist/Draft.css";
+import draftToHtml from "draftjs-to-html";
 import React, { useState } from "react";
+import { Col, Row } from "react-bootstrap";
+import { Editor as DraftEditor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router";
+import { useParams } from "react-router-dom";
 import { z } from "zod";
 import Footer from "../footer/footer.jsx";
 import Header from "../header/header.jsx";
-import Editor from "react-simple-code-editor";
-import { highlight, languages } from "prismjs/components/prism-core";
 import { languageOptions } from "./../question-page/languageOptions";
-import "prismjs/components/prism-clike";
-import "prismjs/components/prism-javascript";
-import "prismjs/components/prism-python";
-import "prismjs/themes/prism.css"; //Example style, you can use another
 import "./create-question.css";
-import { Col, Row } from "react-bootstrap";
-import { EditorState } from "draft-js";
-import "draft-js/dist/Draft.css";
-import { ContentState, convertToRaw } from "draft-js";
-import { Editor as DraftEditor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import "./create-question.css";
-import draftToHtml from "draftjs-to-html";
+import CodeEditor from "@uiw/react-textarea-code-editor";
 
 
 
@@ -42,12 +35,16 @@ function CreateQuestion() {
   const navigate = useNavigate();
   const { courseId } = useParams();
 
-  const [editorState, setEditorState] = useState(
+  const [descEditorState, setDescEditorState] = useState(
+    () => EditorState.createEmpty(),
+  );
+  const [solutionEditorState, setSolutionEditorState] = useState(
     () => EditorState.createEmpty(),
   );
 
-  const  [convertedContent, setConvertedContent] = useState(null);
-  
+  const [descConvertedContent, setDescConvertedContent] = useState(null);
+  const [solutionConvertedContent, setSolutionConvertedContent] = useState(null);
+
   const [editorErrors, setEditorErrors] = useState({ codeCpp: "", codePy: "" })
 
   const [codeCpp, setCodeCpp] = useState(languageOptions[0].default);
@@ -61,17 +58,25 @@ function CreateQuestion() {
     setCodePy(code);
   }
 
-  const handleEditorChange = (state) => {
-    setEditorState(state);
-    convertContentToHTML();
+  const handleDescEditorChange = (state) => {
+    setDescEditorState(state);
+    convertDescContentToHTML();
   }
 
-  const convertContentToHTML = async () => {
-    let currentContentAsHTML = draftToHtml(convertToRaw(editorState.getCurrentContent()));
-    setConvertedContent(currentContentAsHTML);
+  const handleSolutionEditorChange = (state) => {
+    setSolutionEditorState(state);
+    convertSolutionContentToHTML();
   }
 
-  
+  const convertDescContentToHTML = async () => {
+    let currentContentAsHTML = draftToHtml(convertToRaw(descEditorState.getCurrentContent()));
+    setDescConvertedContent(currentContentAsHTML);
+  }
+
+  const convertSolutionContentToHTML = async () => {
+    let currentContentAsHTML = draftToHtml(convertToRaw(solutionEditorState.getCurrentContent()));
+    setSolutionConvertedContent(currentContentAsHTML);
+  }
 
 
   const {
@@ -84,8 +89,10 @@ function CreateQuestion() {
   });
 
   const onSubmit = async (data) => {
-    await convertContentToHTML();
-    
+    console.log("hello")
+    await convertDescContentToHTML();
+    await convertSolutionContentToHTML();
+
     if (codeCpp === languageOptions[0].default || codeCpp === "") {
       setEditorErrors(editorErrors => ({ ...editorErrors, codeCpp: "Cpp code should not be empty or default" }));
     }
@@ -101,7 +108,8 @@ function CreateQuestion() {
     const level = {
       levelName: data.levelName,
       levelTags: data.levelTags,
-      levelDescription: convertedContent,
+      levelDescription: descConvertedContent,
+      levelSolution: solutionConvertedContent,
       difficulty: data.difficulty,
       levelIndex: data.levelIndex,
       testCases: data.testCases,
@@ -117,10 +125,10 @@ function CreateQuestion() {
 
     }).catch(err => console.log(err))
   };
-  
+
   return (
     <div>
-      <Header/>
+      <Header />
       <div className="dashedBorder mt-5">
         <div className="uploadContent">
           <div className="card-body">
@@ -135,7 +143,7 @@ function CreateQuestion() {
               <small className="align-self-start error-text">
                 {errors.levelName?.message}
               </small>
-    
+
             </div>
             <div className="mt-3 d-flex flex-column">
               <input
@@ -148,30 +156,50 @@ function CreateQuestion() {
               <small className="align-self-start error-text">
                 {errors.levelName?.message}
               </small>
-    
+
             </div>
-            <div className="mt-3 d-flex flex-column text-editor-area">
+            <div className="mt-5 d-flex flex-column text-editor-area">
+              <h5>Description</h5>
               <div className="App">
-             
+
                 <DraftEditor
-                  editorState={editorState}
-                  onEditorStateChange={handleEditorChange}
+                  editorState={descEditorState}
+                  onEditorStateChange={handleDescEditorChange}
                   wrapperClassName="wrapper-class"
                   editorClassName="editor-class"
                   toolbarClassName="toolbar-class"
                 />
               </div>
-             
+
               <small className="align-self-start error-text">
                 {errors.levelDescription?.message}
               </small>
             </div>
+
+            <div className="mt-5 d-flex flex-column text-editor-area">
+              <h5>Solution</h5>
+              <div className="App">
+
+                <DraftEditor
+                  editorState={solutionEditorState}
+                  onEditorStateChange={handleSolutionEditorChange}
+                  wrapperClassName="wrapper-class"
+                  editorClassName="editor-class"
+                  toolbarClassName="toolbar-class"
+                />
+              </div>
+
+              <small className="align-self-start error-text">
+                {errors.levelDescription?.message}
+              </small>
+            </div>
+
             <div className="mt-3 d-flex flex-column">
-        
+
               <label htmlFor="difficulty">Difficulty:</label>
 
-              <select 
-                name="difficulty" 
+              <select
+                name="difficulty"
                 id="difficulty"
                 {...register("difficulty")}
               >
@@ -183,7 +211,7 @@ function CreateQuestion() {
               <small className="align-self-start error-text">
                 {errors.difficulty?.message}
               </small>
-            </div>  
+            </div>
 
             <div className="mt-3 d-flex flex-column">
               <input
@@ -196,9 +224,9 @@ function CreateQuestion() {
               <small className="align-self-start error-text">
                 {errors.levelIndex?.message}
               </small>
-    
+
             </div>
-   
+
             <Row>
               <label
                 htmlFor="difficulty"
@@ -217,22 +245,21 @@ function CreateQuestion() {
                 <div>
                   C++
                 </div>
-                <Editor
+                <CodeEditor
+                  autoFocus
                   value={codeCpp}
-                  onValueChange={code => saveCodeCpp(code)}
-                  highlight={code => highlight(code, languages[languageOptions[0].highlighter])}
-                  padding={10}
+                  language={"cpp"}
+                  onChange={(evn) => saveCodeCpp(evn.target.value)}
+                  padding={15}
+                  minHeight={"480px"}
+                  minLength={"400px"}
                   style={{
-                    height: "100%",
-                    fontFamily: "'Fira code', 'Fira Mono', monospace",
-                    fontSize: 12,
-                    borderColor: "grey",
-                    borderWidth: "0.5px",
-                    borderStyle: "solid",
-                    borderRadius: "4px"
+                    overflowWrap: "breakWord",
+                    fontSize: "14",
+                    fontFamily: "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
                   }}
                 />
-              </Col>            
+              </Col>
 
               <Col
                 style={{ height: "600px", padding: "20px" }}
@@ -245,24 +272,21 @@ function CreateQuestion() {
                   Python
                 </div>
 
-                <Editor
-                  {...register("codePy")}
-
+                <CodeEditor
+                  autoFocus
                   value={codePy}
-                  onValueChange={code => saveCodePy(code)}
-                  highlight={codePy => highlight(codePy, languages[languageOptions[1].highlighter])}
-                  padding={10}
+                  language={"python"}
+                  onChange={(evn) => saveCodePy(evn.target.value)}
+                  padding={15}
+                  minHeight={"480px"}
+                  minLength={"400px"}
                   style={{
-                    height: "100%",
-                    fontFamily: "'Fira code', 'Fira Mono', monospace",
-                    fontSize: 12,
-                    borderColor: "grey",
-                    borderWidth: "0.5px",
-                    borderStyle: "solid",
-                    borderRadius: "4px"
+                    overflowWrap: "breakWord",
+                    fontSize: "14",
+                    fontFamily: "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
                   }}
                 />
-              </Col>         
+              </Col>
             </Row>
             <button
               className="btn col-2 uploadBtn"
@@ -270,16 +294,16 @@ function CreateQuestion() {
               styles={{ display: "none" }}
               onClick={handleSubmit(onSubmit)}
             >
-              <span className="uploadBtnText"> 
-                Create Question 
+              <span className="uploadBtnText">
+                Create Question
               </span>
-            </button> 
+            </button>
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
-    
+
   );
 }
 

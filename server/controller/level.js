@@ -39,6 +39,7 @@ export async function addLevel(req, res) {
         levelId: ObjectId().toString(),
         levelName: req.body.levelName,
         levelDescription: req.body.levelDescription,
+        levelSolution: req.body.levelSolution,
         levelIndex: req.body.levelIndex,
         codeCpp: req.body.inputCpp,
         codePy: req.body.inputPy,
