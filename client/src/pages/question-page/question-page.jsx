@@ -487,7 +487,14 @@ function QuestionPage() {
                 </button>
               </div>
               <div className="modal-body">
-                <Canvas2></Canvas2>
+                <div className="row">
+                  <div className="col-9">
+                    <Canvas2></Canvas2>
+                  </div>
+                  <div className="col-3">
+                    <div>ekmek ekmek</div>
+                  </div>
+                </div>
               </div>
               <div className="modal-footer">
                 <button
