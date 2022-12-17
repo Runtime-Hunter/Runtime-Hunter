@@ -39,6 +39,7 @@ export async function addTestcase(req, res) {
         testcaseId: ObjectId(),
         input: req.body.input,
         output: req.body.output,
+        timeLimit: req.body.timeLimit,
     };
 
     db_connect.collection("courses")

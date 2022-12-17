@@ -15,6 +15,7 @@ const createTestcaseSchema = z
   .object({
     input: z.string().optional(),
     output: z.string().optional(),
+    timeLimit: z.number().required(),
   });
 
 
@@ -72,6 +73,18 @@ function CreateTestcase() {
                 {...register("output")}
                 className="btn-border input-style form-control"
                 placeholder="Output"
+                type="text"
+              >
+              </input>
+              <small className="align-self-start error-text">
+                {errors.output?.message}
+              </small>
+            </div> 
+            <div className="mt-3 d-flex flex-column">
+              <input
+                {...register("timeLimit")}
+                className="btn-border input-style form-control"
+                placeholder="Time Limit"
                 type="text"
               >
               </input>
