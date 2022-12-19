@@ -1,17 +1,14 @@
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.js";
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import { StoreProvider } from "./store/store";
 import { initialState, userReducer } from "./store/userReducer";
 
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-
-root.render(
+ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <StoreProvider
@@ -22,4 +19,6 @@ root.render(
       </StoreProvider>
     </BrowserRouter>
   </React.StrictMode>,
+
+  document.getElementById("root"),
 );

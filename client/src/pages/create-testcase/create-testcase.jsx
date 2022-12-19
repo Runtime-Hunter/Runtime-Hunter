@@ -15,7 +15,7 @@ const createTestcaseSchema = z
   .object({
     input: z.string().optional(),
     output: z.string().optional(),
-    timeLimit: z.number(),
+    timeLimit: z.number().required(),
   });
 
 
