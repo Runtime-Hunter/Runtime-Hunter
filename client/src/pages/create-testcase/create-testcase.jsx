@@ -1,7 +1,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { useParams } from "react-router-dom";
@@ -15,7 +15,7 @@ const createTestcaseSchema = z
   .object({
     input: z.string().optional(),
     output: z.string().optional(),
-    timeLimit: z.number(),
+    timeLimit: z.string().nonempty(),
   });
 
 
@@ -31,6 +31,8 @@ function CreateTestcase() {
     mode: "all",
   });
 
+  const [responseMessage, setResponseMessage] = useState("")
+
 
   const [state] = useStore();
   const { user: currentUser } = state;
@@ -41,12 +43,19 @@ function CreateTestcase() {
     const testcase = {
       input: data.input,
       output: data.output,
+      timeLimit: parseInt(data.timeLimit)
     };
+
+    console.log("creating test case:", testcase)
 
 
     await axios.post(`${process.env.REACT_APP_URL}/api/testcase/${courseId}/${levelId}`, testcase).then(res => {
-      navigate(`/courses/${courseId}/${levelId}`);
-    }).catch(err => console.log(err))
+      // navigate(`/courses/${courseId}/${levelId}`);
+      setResponseMessage(res.data.message)
+    }).catch(err => {
+      console.log(err)
+      setResponseMessage(err.message)
+    })
   };
   
   return (
@@ -56,6 +65,18 @@ function CreateTestcase() {
       <div className="dashedBorder mt-5">
         <div className="uploadContent">
           <div className="card-body">
+            <div className="mt-3 d-flex flex-column">
+              <input
+                {...register("timeLimit")}
+                className="btn-border input-style form-control"
+                placeholder="Time Limit"
+                type="text"
+              >
+              </input>
+              <small className="align-self-start error-text">
+                {errors.timeLimit?.message}
+              </small>
+            </div> 
             <div className="mt-3 d-flex flex-column">
               <input
                 {...register("input")}
@@ -69,29 +90,18 @@ function CreateTestcase() {
               </small>
             </div>
             <div className="mt-3 d-flex flex-column">
-              <input
+              <textarea
                 {...register("output")}
                 className="btn-border input-style form-control"
                 placeholder="Output"
                 type="text"
               >
-              </input>
+              </textarea>
               <small className="align-self-start error-text">
                 {errors.output?.message}
               </small>
             </div> 
-            <div className="mt-3 d-flex flex-column">
-              <input
-                {...register("timeLimit")}
-                className="btn-border input-style form-control"
-                placeholder="Time Limit"
-                type="text"
-              >
-              </input>
-              <small className="align-self-start error-text">
-                {errors.output?.message}
-              </small>
-            </div> 
+
         
             <button
               className="btn col-2 uploadBtn"
@@ -103,6 +113,8 @@ function CreateTestcase() {
                 Create Testcase
               </span>
             </button> 
+
+            <p>{responseMessage}</p>
           </div>
         </div>
       </div>

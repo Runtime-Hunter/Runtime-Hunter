@@ -132,3 +132,6 @@
     margin: 5px 0px 5px 0px;
   }
   
+  textarea{
+    height: 100px;
+  }
