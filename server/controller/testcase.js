@@ -5,7 +5,7 @@ export async function getTestcases(req, res) {
     let db_connect = getDb("runtime-hunter");
 
     db_connect.collection("courses")
-        .findOne({ "_id": ObjectId(req.params.courseId), "levels.levelId": ObjectId(req.params.levelId) })
+        .findOne({ "_id": ObjectId(req.params.courseId), "levels.levelId": (req.params.levelId) })
         .then((result) => {
             var levels = result.levels;
             for (let i = 0; i < levels.length; i++) {
@@ -51,7 +51,7 @@ export async function addTestcase(req, res) {
         .then((result) => {
             if (!result) {
                 db_connect.collection("courses").findOne({
-                    "_id": ObjectId(req.params.courseId), "levels.levelId": { $eq: ObjectId(req.params.levelId) }
+                    "_id": ObjectId(req.params.courseId), "levels.levelId": { $eq: (req.params.levelId) }
                 }, function (req1, res1) {
                     console.log(res1);
                     var levels = res1.levels;
@@ -60,7 +60,7 @@ export async function addTestcase(req, res) {
                             levels[i].testCases.push(testcase);
                         }
                     }
-                    db_connect.collection("courses").updateOne({ "_id": ObjectId(req.params.courseId), "levels.levelId": ObjectId(req.params.levelId) }, { $set: { "levels": levels } }, function (err, response) {
+                    db_connect.collection("courses").updateOne({ "_id": ObjectId(req.params.courseId), "levels.levelId": (req.params.levelId) }, { $set: { "levels": levels } }, function (err, response) {
                         if (err)
                             throw err;
                         return res.json(response);
