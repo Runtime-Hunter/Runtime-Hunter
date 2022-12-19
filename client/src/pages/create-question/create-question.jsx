@@ -24,7 +24,7 @@ const createQuestionSchema = z
   .object({
     levelName: z.string().nonempty(),
     levelTags: z.string().nonempty(),
-    levelPosition: z.string().nonempty(),
+    levelIndex: z.string().nonempty(),
     difficulty: z.string().nonempty(),
   });
 
@@ -47,10 +47,12 @@ function CreateQuestion() {
   const [descConvertedContent, setDescConvertedContent] = useState(null);
   const [solutionConvertedContent, setSolutionConvertedContent] = useState(null);
 
-  const [editorErrors, setEditorErrors] = useState({ codeCpp: "", codePy: "" })
 
   const [codeCpp, setCodeCpp] = useState(languageOptions[0].default);
   const [codePy, setCodePy] = useState(languageOptions[1].default);
+
+  const [editorErrors, setEditorErrors] = useState({ codeCpp: "", codePy: "" })
+
 
   function saveCodeCpp(code) {
     setCodeCpp(code);
@@ -121,9 +123,7 @@ function CreateQuestion() {
 
 
     await axios.post(`${process.env.REACT_APP_URL}/api/level`, level).then(res => {
-      console.log(res);
       setResponseMessage(res.data.message)
-      // navigate("/courses");
 
     }).catch(err => {
       console.log(err)
