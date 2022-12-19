@@ -10,7 +10,7 @@ void solution(){
 }
 
 
-# Do not change below
+// Do not change below
 int main() {
         solution();
         return 0;
