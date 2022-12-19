@@ -105,9 +105,9 @@ Level.propTypes = {
   levelTags: PropTypes.string,
   levelDescription: PropTypes.string,
   difficulty: PropTypes.string,
-  submissions: PropTypes.array,
-  testCases: PropTypes.array,
-  edit: PropTypes.func
+  // submissions: PropTypes.array,
+  // testCases: PropTypes.array,
+  // edit: PropTypes.func
 }
 
 Level.defaultProps = {
@@ -116,9 +116,9 @@ Level.defaultProps = {
   levelTags: "unknown",
   levelDescription: "unknown",
   difficulty: "unknown",
-  submissions: "unknown",
-  testCases: "unknown",
+  // submissions: "unknown",
+  // testCases: "unknown",
   // eslint-disable-next-line no-undef
-  edit: () => any,
+  // edit: () => any,
 }
 export default Level;

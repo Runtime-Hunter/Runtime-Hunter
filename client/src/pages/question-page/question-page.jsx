@@ -1,3 +1,4 @@
+import CodeEditor from "@uiw/react-textarea-code-editor";
 import axios from "axios";
 import { encode as base64_encode } from "base-64";
 import React, { useCallback, useEffect, useState } from "react";
@@ -8,7 +9,6 @@ import { useStore } from "../../store/store";
 import Header from "../header/header";
 import { languageOptions } from "./languageOptions";
 import "./question-page.css";
-import CodeEditor from "@uiw/react-textarea-code-editor";
 
 
 
@@ -324,7 +324,11 @@ function QuestionPage() {
                   role="tabpanel"
                   aria-labelledby="nav-solution-tab"
                 >
-                  <h3>Solution</h3>
+                  {/* <h3>{question.levelSolution}</h3> */}
+                  {question ? <div
+                    className="codeBlock"
+                    dangerouslySetInnerHTML={{ __html: question.levelSolution }}
+                  /> : ""}
                 </div>
                 <div
                   className="tab-pane fade"
