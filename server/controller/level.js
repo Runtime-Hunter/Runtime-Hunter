@@ -39,12 +39,13 @@ export async function addLevel(req, res) {
         levelId: ObjectId().toString(),
         levelName: req.body.levelName,
         levelDescription: req.body.levelDescription,
+        levelSolution: req.body.levelSolution,
         levelIndex: req.body.levelIndex,
         codeCpp: req.body.inputCpp,
         codePy: req.body.inputPy,
         difficulty: req.body.difficulty,
         testCases: req.body.testCases ? req.body.testCases : [],
-        submissions: [],
+        levelTags: req.body.levelTags,
     };
 
     db_connect.collection("courses")
@@ -63,7 +64,7 @@ export async function addLevel(req, res) {
                     db_connect.collection("courses").updateOne({ "_id": ObjectId(req.body.courseId) }, { $set: { "levels": levels } }, function (err, response) {
                         if (err)
                             throw err;
-                        return res.json(response);
+                        return res.json({ message: "Successfully created level" });
                     });
                 });
             }

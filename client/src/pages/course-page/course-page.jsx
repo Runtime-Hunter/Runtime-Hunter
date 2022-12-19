@@ -111,18 +111,18 @@ function CoursePage() {
     navigate(`/${courseId}/createQuestion`);
   }
 
-  const listLevels = (levels) => {
+  const listLevels = (_levels) => {
     let lastSolvedIdx = 0;
     const correctlySolvedQuestions = currentUser.correctlySolvedQuestions;
 
-    levels.map((item, index)=> {
+    _levels.map((item, index)=> {
 
       if ((correctlySolvedQuestions && correctlySolvedQuestions.includes(item.levelId)) || index == 0) {
         lastSolvedIdx = index;
       }
     });
 
-    return levels.map((item,index) => {
+    return _levels.map((item,index) => {
 
       return (
         
@@ -200,7 +200,7 @@ function CoursePage() {
 
                 listLevels(levels)            :
 
-                <p>No file found for this course</p>
+                <p>No level found for this course</p>
               }
             </div>
           </div>
