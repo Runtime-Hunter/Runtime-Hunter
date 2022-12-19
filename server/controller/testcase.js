@@ -47,6 +47,8 @@ export async function addTestcase(req, res) {
             "_id": ObjectId(req.params.courseId),
             "levels.levelId": req.params.levelId,
             "levels.testCases.input": req.body.input,
+            "levels.testCases.ouput": req.body.output,
+
         })
         .then((result) => {
             if (!result) {
@@ -63,7 +65,7 @@ export async function addTestcase(req, res) {
                     db_connect.collection("courses").updateOne({ "_id": ObjectId(req.params.courseId), "levels.levelId": (req.params.levelId) }, { $set: { "levels": levels } }, function (err, response) {
                         if (err)
                             throw err;
-                        return res.json(response);
+                        return res.json({ message: 'Created test case succesfully' });
                     });
                 });
             }

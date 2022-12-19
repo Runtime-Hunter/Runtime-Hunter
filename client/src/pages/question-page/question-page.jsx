@@ -86,7 +86,7 @@ function QuestionPage() {
 
   useEffect(() => {
     getSubmissionHistory();
-  }, [code])
+  }, [levelId])
 
   useEffect(() => {
     if (question) {
@@ -183,12 +183,12 @@ function QuestionPage() {
         // const testcasResultStatus = (parseInt(subResult.stdout) === parseInt(testcases[i].output) ? true : false);
         // const resultOutput = subResult.stdout.replace(/[\n\r]/g, "")
         let resultOutput = subResult.stdout
-        resultOutput = resultOutput.trim()
+        resultOutput = String(resultOutput.trim())
         setOutput(resultOutput)
         console.log("Submission output: ", resultOutput)
         console.log("question output: ", testcases[i].output)
-        setOutput(testcases[i].output)
-        const testcasResultStatus = (resultOutput === testcases[i].output ? true : false);
+        // setOutput(testcases[i].output)
+        const testcasResultStatus = (resultOutput === String((testcases[i].output).trim()) ? true : false);
         setTestcaseResults([...testcaseResults, testcasResultStatus])
         const status = testcasResultStatus ? "Passed" : "Failed"
         setDetails((oldDetail) => oldDetail + "\n" + "Input: " + testcases[i].input + " - Output: " + subResult.stdout + " => Result: " + status + "\n");
@@ -216,6 +216,8 @@ function QuestionPage() {
       }
       setDetails((oldDetail) => oldDetail.replace("Creating submission...", "All tests finished"));
       console.log("Testcase res: ", testcaseResults);
+      console.log("Details: ", details);
+
     }).catch(err => {
       console.log("Error: ", err);
     })
