@@ -17,6 +17,8 @@ import Login from "./pages/login/login";
 import QuestionPage from "./pages/question-page/question-page";
 import Signup from "./pages/signup/signup";
 import ProfilePage from "./pages/profile-page/profile-page";
+import Testcases from "./pages/testcases-page/testcases-page";
+
 import { useStore } from "./store/store";
 function App() {
   const [state] = useStore();
@@ -105,6 +107,10 @@ function App() {
             <Route
               path="/courses/:courseId/:levelId/testcase"
               element={<CreateTestcase />}
+            />
+            <Route
+              path="/courses/:courseId/:levelId/testcases"
+              element={<Testcases />}
             />
             <Route
               path="*"
