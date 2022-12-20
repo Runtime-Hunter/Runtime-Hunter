@@ -46,7 +46,7 @@ function Testcases() {
 
                 return(
                   <div
-                    key={item._id}
+                    key={item.testcaseId}
                     className="row mt-4 testcase"
                   >
                     <div
@@ -55,7 +55,7 @@ function Testcases() {
                       <Testcase
                         courseId={courseId}
                         levelId={levelId}
-                        testcaseId={item._id}
+                        testcaseId={item.testcaseId}
                         index={index}
                       >
                       </Testcase>
