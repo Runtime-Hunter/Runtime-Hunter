@@ -109,7 +109,7 @@ export async function addSubmission(req, res) {
                         });
                 }
             });
-        return res.json(response);
+        // return res.json(response);
     });
 
 
