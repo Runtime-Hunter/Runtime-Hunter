@@ -165,7 +165,6 @@ const draw = (ctx, now, x) => {
     //   }
     // }
     //whereabout += 5
-    console.log(now - lastTime, walkCounter);
 
     walkCounter++;
     gameFrame++;
@@ -187,7 +186,6 @@ const knightAttacks = (ctx, now , x) => {
         whereabout++;
       }
       if (gameFrame % staggerFrames === 0) {
-        console.log(frameX, gameFrame, "walk");
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -200,7 +198,6 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(knight2Idle, frameX * spriteWidth, frameY * spriteHeight, spriteWidth, spriteHeight, -700 + whereabout, 155, spriteWidth / 2, spriteHeight / 2);
       ctx.drawImage(troll1Idle, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "idle1");
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -214,7 +211,6 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(troll1Hurt, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "attack1");
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -228,7 +224,6 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(troll1Idle, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "idle2");
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -242,7 +237,7 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(troll1Attack, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "attack2");
+        
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -255,7 +250,7 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(knight2Idle, frameX * spriteWidth, frameY * spriteHeight, spriteWidth, spriteHeight, -700 + whereabout, 155, spriteWidth / 2, spriteHeight / 2);
       ctx.drawImage(troll1Idle, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "idle1");
+        
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -269,7 +264,7 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(troll1Hurt, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "attack1");
+        
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -283,7 +278,7 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(troll1Idle, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "idle2");
+        
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -297,7 +292,7 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(troll1Attack, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "attack2");
+        
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -310,7 +305,7 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(knight2Idle, frameX * spriteWidth, frameY * spriteHeight, spriteWidth, spriteHeight, -700 + whereabout, 155, spriteWidth / 2, spriteHeight / 2);
       ctx.drawImage(troll1Idle, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "idle1");
+        
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -324,7 +319,7 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(troll1Hurt, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "attack1");
+        
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -338,7 +333,7 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(troll1Idle, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "idle2");
+        
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -352,7 +347,7 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(troll1Attack, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "attack2");
+        
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -365,7 +360,7 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(knight2Idle, frameX * spriteWidth, frameY * spriteHeight, spriteWidth, spriteHeight, -700 + whereabout, 155, spriteWidth / 2, spriteHeight / 2);
       ctx.drawImage(troll1Idle, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "idle1");
+        
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -379,7 +374,7 @@ const knightAttacks = (ctx, now , x) => {
       ctx.drawImage(troll1Hurt, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "attack1");
+        
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -394,7 +389,7 @@ const knightAttacks = (ctx, now , x) => {
       
       if (gameFrame % staggerFrames === 0) {
         dieAbout += 12;
-        console.log(gameFrame, "attack2");
+        
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -456,7 +451,7 @@ const winsAfterX = (ctx, now , x) => {
       ctx.drawImage(knight2Attack, frameX * spriteWidth, frameY * spriteHeight, spriteWidth, spriteHeight, -700 + whereabout, 155, spriteWidth / 2, spriteHeight / 2);
       ctx.drawImage(troll1Hurt, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       
-      console.log(gameFrame, "attack0 loop");
+      
       if (gameFrame % staggerFrames === 0) {
         if (frameX < 9) frameX++;
   
@@ -491,7 +486,6 @@ const winsAfterX = (ctx, now , x) => {
 
       if(testCase < x && gameFrame % (516 + testCase * 240) == 0)
       {
-        console.log("testCase: ", testCase);
         testCase += 1; 
       }
     }
@@ -541,7 +535,6 @@ const winsAfterX = (ctx, now , x) => {
       } 
     }
 
-    console.log(gameFrame);
     gameFrame++;
   }
 };
@@ -587,7 +580,6 @@ const arrayInput = (ctx, now, x) => {
       
       
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, frameX, "attack0 loop");
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -595,7 +587,6 @@ const arrayInput = (ctx, now, x) => {
       
       if(testCase < x.length && (gameFrame % (399 + testCase * 120)) == 0)
       {
-        console.log("testCase: ", testCase, index);
         index += 1;
         testCase += 1; 
       }
@@ -607,7 +598,6 @@ const arrayInput = (ctx, now, x) => {
       ctx.drawImage(knight2Hurt, frameX * spriteWidth, frameY * spriteHeight, spriteWidth, spriteHeight, -700 + whereabout, 155, spriteWidth / 2, spriteHeight / 2);
       ctx.drawImage(troll1Attack, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout, 65, troll1AttackWidth / 2, troll1AttackHeight / 2);
       
-      console.log(gameFrame, "attack0 loop");
       if (gameFrame % staggerFrames === 0) {
         if (frameX < 9) frameX++;
   
@@ -615,7 +605,6 @@ const arrayInput = (ctx, now, x) => {
       } 
       if(testCase < x.length && gameFrame % (399 + testCase * 120) == 0)
       {
-        console.log("testCase: ", 400 + x.length * 120, 400 + testCase * 120);
         index += 1;
         testCase += 1; 
       }
@@ -629,7 +618,6 @@ const arrayInput = (ctx, now, x) => {
       
       
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, frameX, testCase, x.length, "die 0 loop");
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -641,11 +629,10 @@ const arrayInput = (ctx, now, x) => {
       ctx.drawImage(backgroundImage, 0, 0, 1000, 550, 0 , 0, 800, 600);
       ctx.drawImage(knight2Attack, frameX * spriteWidth, frameY * spriteHeight, spriteWidth, spriteHeight, -700 + whereabout, 155, spriteWidth / 2, spriteHeight / 2);
       ctx.drawImage(troll1Die, frameX * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout + dieAbout, 105, troll1AttackWidth / 2, troll1AttackHeight / 2);
-      console.log(gameFrame, frameX, "die loop");
+      
 
       if (gameFrame % staggerFrames === 0) {
         dieAbout += 12;
-        console.log(gameFrame, "attack2");
         if (frameX < 9) frameX++;
   
         else frameX = 0;
@@ -657,30 +644,30 @@ const arrayInput = (ctx, now, x) => {
       ctx.drawImage(backgroundImage, 0, 0, 1000, 550, 0 , 0, 800, 600);
       ctx.drawImage(knight2Jump, frameX * spriteWidth, frameY * spriteHeight, spriteWidth, spriteHeight, -700 + whereabout, 155, spriteWidth / 2, spriteHeight / 2);
       ctx.drawImage(troll1Die, 9 * troll1AttackWidth, frameY * troll1AttackHeight, troll1AttackWidth, troll1AttackHeight, 700 - whereabout + dieAbout, 105, troll1AttackWidth / 2, troll1AttackHeight / 2);
-      console.log(gameFrame, "win win win", (600 + x * 240));
+      
 
       if (gameFrame % staggerFrames === 0) {
-        console.log(gameFrame, "attack2");
         if (frameX < 9) frameX++;
   
         else frameX = 0;
       } 
     }
 
-    console.log(gameFrame);
     gameFrame++;
   }
 }
 
-export default function Canvas2() {  
+// eslint-disable-next-line react/prop-types
+export default function Canvas2({ gameArray }) {  
   const canvasRef = useRef(null);
   const [ctx, setCtx] = useState(null);
-  const [x, setX] = useState([1, -1, 1, 1, -1, 1]);
+  const [x, setX] = useState(gameArray);
+  console.log(x);
 
   const animatePlayerLoop = useCallback(
     (now) => {
       if (!ctx) return;
-      if(x.length != 6)
+      if(x[x.length - 1] === -1)
       {
         draw(ctx, now, x);
       }

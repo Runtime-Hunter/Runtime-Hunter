@@ -16,6 +16,14 @@ import Canvas2 from "../../components/canvas/canvas";
 function QuestionPage() {
   const [state] = useStore();
   const { user: currentUser } = state;
+  
+  const [totalTime, setTotalTime] = useState(10);
+  const [numberOfTestcases, setNumberOfTestCases] = useState(5);
+  const [testCaseTimes, setTestCaseTimes] = useState([1, 1, 1, 1, 6])
+  const [failedTestCase, setFailedTestCase] = useState(-1);
+  const [gameArray, setGameArray] = useState([]);
+  const [gameStory, setGameStory] = useState([]);
+  const array = ["apple", "banana", "orange"];
 
   const navigate = useNavigate();
 
@@ -98,7 +106,8 @@ function QuestionPage() {
 
 
   async function getTestcases() {
-
+    console.log(courseId);
+    console.log(levelId);
     const testcases = await axios.get(`${process.env.REACT_APP_URL}/api/testcase/${courseId}/${levelId}`,).then(res => {
       if (res.data !== null) {
         return res.data;
@@ -108,6 +117,7 @@ function QuestionPage() {
       }
     }).catch(err => console.log(err))
 
+    console.log(testcases);
     return testcases;
   }
 
@@ -222,6 +232,71 @@ function QuestionPage() {
     })
   }
 
+  function findGameArray()
+  {
+    const monsterAttackTime = totalTime / numberOfTestcases;
+    let result = [];
+    let currentTotalTime = 0;
+    let monsterAttackCount = 0;
+    let gameStoryGenerator = [];
+    for (let index = 0; index < numberOfTestcases; index++) {
+      monsterAttackCount = Math.floor(currentTotalTime / monsterAttackTime);
+      // console.log("before adding: ", monsterAttackCount, Math.floor(currentTotalTime / monsterAttackTime));
+      currentTotalTime += testCaseTimes[index];
+      if (currentTotalTime > totalTime) {
+        result.push(-1);
+        break;
+      }
+      // console.log("after adding: ", monsterAttackCount, Math.floor(currentTotalTime / monsterAttackTime));
+      
+      if(Math.floor(currentTotalTime / monsterAttackTime) > monsterAttackCount)
+      {
+        for (let i = 0; i < Math.floor(currentTotalTime / monsterAttackTime) - monsterAttackCount; i++) {
+          monsterAttackCount++;
+          gameStoryGenerator.push(`Monster attacks you after ${monsterAttackCount * monsterAttackTime} seconds.`)
+          result.push(-1);
+        }
+      }
+      result.push(1);
+      gameStoryGenerator.push(`You solved testcase ${index + 1} in ${testCaseTimes[index]} seconds.`)
+    }
+    console.log("result is here: ", gameStoryGenerator);
+
+    return result;
+  }
+  
+  function findGameStory()
+  {
+    const monsterAttackTime = totalTime / numberOfTestcases;
+    let result = [];
+    let currentTotalTime = 0;
+    let monsterAttackCount = 0;
+    let gameStoryGenerator = [];
+    for (let index = 0; index < numberOfTestcases; index++) {
+      monsterAttackCount = Math.floor(currentTotalTime / monsterAttackTime);
+      // console.log("before adding: ", monsterAttackCount, Math.floor(currentTotalTime / monsterAttackTime));
+      currentTotalTime += testCaseTimes[index];
+      if (currentTotalTime > totalTime) {
+        result.push(-1);
+        break;
+      }
+      // console.log("after adding: ", monsterAttackCount, Math.floor(currentTotalTime / monsterAttackTime));
+      
+      if(Math.floor(currentTotalTime / monsterAttackTime) > monsterAttackCount)
+      {
+        for (let i = 0; i < Math.floor(currentTotalTime / monsterAttackTime) - monsterAttackCount; i++) {
+          monsterAttackCount++;
+          gameStoryGenerator.push(`Monster attacks you after ${monsterAttackCount * monsterAttackTime} seconds.`)
+          result.push(-1);
+        }
+      }
+      result.push(1);
+      gameStoryGenerator.push(`You solved testcase ${index + 1} in ${testCaseTimes[index]} seconds.`)
+    }
+    console.log("result is here: ", gameStoryGenerator);
+
+    return gameStoryGenerator;
+  }
 
   return (
     <div>
@@ -489,10 +564,14 @@ function QuestionPage() {
               <div className="modal-body">
                 <div className="row">
                   <div className="col-9">
-                    <Canvas2></Canvas2>
+                    <Canvas2 gameArray = {findGameArray()}></Canvas2>
                   </div>
                   <div className="col-3">
-                    <div>ekmek ekmek</div>
+                    <div>
+                      {findGameStory().map(item => (
+                        <p key={item}>{item}</p>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
