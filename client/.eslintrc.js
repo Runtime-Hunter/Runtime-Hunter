@@ -9,6 +9,10 @@ module.exports = {
     "react": {
       "version": "detect",
     },
+    "eslint.format.enable": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
   },
   "extends": [
     "eslint:recommended",

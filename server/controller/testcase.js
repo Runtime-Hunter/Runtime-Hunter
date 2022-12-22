@@ -13,7 +13,6 @@ export async function getTestcases(req, res) {
                     return res.json(levels[i].testCases);
                 }
             }
-
         })
         .catch((err) => {
             throw err;
