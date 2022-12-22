@@ -1,3 +1,4 @@
+import CodeEditor from "@uiw/react-textarea-code-editor";
 import axios from "axios";
 import { encode as base64_encode } from "base-64";
 import React, { useCallback, useEffect, useState } from "react";
@@ -8,7 +9,6 @@ import { useStore } from "../../store/store";
 import Header from "../header/header";
 import { languageOptions } from "./languageOptions";
 import "./question-page.css";
-import CodeEditor from "@uiw/react-textarea-code-editor";
 import Canvas2 from "../../components/canvas/canvas";
 
 
@@ -95,7 +95,7 @@ function QuestionPage() {
 
   useEffect(() => {
     getSubmissionHistory();
-  }, [code])
+  }, [levelId])
 
   useEffect(() => {
     if (question) {
@@ -194,12 +194,12 @@ function QuestionPage() {
         // const testcasResultStatus = (parseInt(subResult.stdout) === parseInt(testcases[i].output) ? true : false);
         // const resultOutput = subResult.stdout.replace(/[\n\r]/g, "")
         let resultOutput = subResult.stdout
-        resultOutput = resultOutput.trim()
+        resultOutput = String(resultOutput.trim())
         setOutput(resultOutput)
         console.log("Submission output: ", resultOutput)
         console.log("question output: ", testcases[i].output)
-        setOutput(testcases[i].output)
-        const testcasResultStatus = (resultOutput === testcases[i].output ? true : false);
+        // setOutput(testcases[i].output)
+        const testcasResultStatus = (resultOutput === String((testcases[i].output).trim()) ? true : false);
         setTestcaseResults([...testcaseResults, testcasResultStatus])
         const status = testcasResultStatus ? "Passed" : "Failed"
         setDetails((oldDetail) => oldDetail + "\n" + "Input: " + testcases[i].input + " - Output: " + subResult.stdout + " => Result: " + status + "\n");
@@ -227,6 +227,8 @@ function QuestionPage() {
       }
       setDetails((oldDetail) => oldDetail.replace("Creating submission...", "All tests finished"));
       console.log("Testcase res: ", testcaseResults);
+      console.log("Details: ", details);
+
     }).catch(err => {
       console.log("Error: ", err);
     })
@@ -400,7 +402,11 @@ function QuestionPage() {
                   role="tabpanel"
                   aria-labelledby="nav-solution-tab"
                 >
-                  <h3>Solution</h3>
+                  {/* <h3>{question.levelSolution}</h3> */}
+                  {question ? <div
+                    className="codeBlock"
+                    dangerouslySetInnerHTML={{ __html: question.levelSolution }}
+                  /> : ""}
                 </div>
                 <div
                   className="tab-pane fade"

@@ -1,6 +1,4 @@
-
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
 import { Badge, NavItem } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { useStore } from "../../store/store";
@@ -26,6 +24,13 @@ function Level({ courseId, levelId, levelName, levelTags, difficulty, unlock }) 
       e.preventDefault();
       e.stopPropagation();
       navigate(`/courses/${courseId}/${levelId}/testcase`)
+    }
+  }
+  const seeTestcases = (e) => {
+    if (levelId !== "unknown" & courseId !== "unknown") {
+      e.preventDefault();
+      e.stopPropagation();
+      navigate(`/courses/${courseId}/${levelId}/testcases`)
     }
   }
 
@@ -85,6 +90,19 @@ function Level({ courseId, levelId, levelName, levelTags, difficulty, unlock }) 
             >
               <button
                 className="search-bar-button"
+                onClick={(e) => seeTestcases(e)}
+              >
+                See Testcases
+              </button>
+            </div>
+          }
+
+          {currentUser.userType == 2 &&
+            <div
+              className="col-2 align-self-center"
+            >
+              <button
+                className="search-bar-button"
                 onClick={(e) => addTestcase(e)}
               >
                 Add Testcase
@@ -105,9 +123,9 @@ Level.propTypes = {
   levelTags: PropTypes.string,
   levelDescription: PropTypes.string,
   difficulty: PropTypes.string,
-  submissions: PropTypes.array,
-  testCases: PropTypes.array,
-  edit: PropTypes.func
+  // submissions: PropTypes.array,
+  // testCases: PropTypes.array,
+  // edit: PropTypes.func
 }
 
 Level.defaultProps = {
@@ -116,9 +134,9 @@ Level.defaultProps = {
   levelTags: "unknown",
   levelDescription: "unknown",
   difficulty: "unknown",
-  submissions: "unknown",
-  testCases: "unknown",
+  // submissions: "unknown",
+  // testCases: "unknown",
   // eslint-disable-next-line no-undef
-  edit: () => any,
+  // edit: () => any,
 }
 export default Level;

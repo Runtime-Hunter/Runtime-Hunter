@@ -2,6 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import React, { useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { useParams } from "react-router-dom";
@@ -9,9 +10,9 @@ import { z } from "zod";
 import { useStore } from "../../store/store";
 import Footer from "../footer/footer.jsx";
 import Header from "../header/header.jsx";
-import "./create-testcase.css";
+import "./testcase-page.css";
 
-const createTestcaseSchema = z
+const EditTestcaseSchema = z
   .object({
     input: z.string().optional(),
     output: z.string().optional(),
@@ -19,44 +20,78 @@ const createTestcaseSchema = z
   });
 
 
-function CreateTestcase() {
-  
-  const navigate = useNavigate();
+function EditTestcase() {
+
+  const [testcase, setTestcase] = useState(null);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({
-    resolver: zodResolver(createTestcaseSchema),
+    resolver: zodResolver(EditTestcaseSchema),
     mode: "all",
   });
 
   const [responseMessage, setResponseMessage] = useState("")
 
+  const { courseId, levelId, testcaseId } = useParams();
 
-  const [state] = useStore();
-  const { user: currentUser } = state;
 
-  const { courseId, levelId } = useParams();
+  const getTestcase = async () => {
+    await axios.get(`${process.env.REACT_APP_URL}/api/testcase/${courseId}/${levelId}/${testcaseId}`).then(res => {
+      let testcase = res.data;
+      testcase.timeLimit = (testcase.timeLimit).toString();
+      setTestcase(testcase);
+    })
+  }
+
+  const checkTestcaseUpdated = (newTestcase) => {
+    if (testcase !== null && 
+        newTestcase.timeLimit == testcase.timeLimit && 
+        newTestcase.input == testcase.input && 
+        newTestcase.output == testcase.output) {
+      return false;
+    }
+    return true;
+  }
 
   const onSubmit = async (data) => {
-    const testcase = {
+    const newTestcase = {
       input: data.input,
       output: data.output,
       timeLimit: parseInt(data.timeLimit)
     };
 
-    console.log("creating test case:", testcase)
+    const testcaseUpdated = checkTestcaseUpdated(newTestcase);
 
+    if (testcaseUpdated) {
 
-    await axios.post(`${process.env.REACT_APP_URL}/api/testcase/${courseId}/${levelId}`, testcase).then(res => {
-      // navigate(`/courses/${courseId}/${levelId}`);
-      setResponseMessage(res.data.message)
-    }).catch(err => {
-      console.log(err)
-      setResponseMessage(err.message)
-    })
+      await axios.put(`${process.env.REACT_APP_URL}/api/testcase/${courseId}/${levelId}/${testcaseId}`, newTestcase).then(res => {
+        setResponseMessage(res.data.message)
+      }).catch(err => {
+        console.log(err)
+        setResponseMessage(err.message)
+      })
+    }
+    else {
+      setResponseMessage("Testcase is already the same.");
+    }
   };
+
+  useEffect(() => {
+    getTestcase();
+  }, []);
+
+  useEffect(() => {
+    if (testcase !== null) {
+      setValue("timeLimit", (testcase?.timeLimit));
+      setValue("input", (testcase?.input));
+      setValue("output", (testcase?.output));
+
+    }
+  }, [testcase]);
   
   return (
     <div>
@@ -69,7 +104,7 @@ function CreateTestcase() {
               <input
                 {...register("timeLimit")}
                 className="btn-border input-style form-control"
-                placeholder="Time Limit"
+                defaultValue={ testcase?.timeLimit}
                 type="text"
               >
               </input>
@@ -81,7 +116,7 @@ function CreateTestcase() {
               <input
                 {...register("input")}
                 className="btn-border input-style form-control"
-                placeholder="Input"
+                defaultValue={testcase?.input}
                 type="text"
               >
               </input>
@@ -93,7 +128,7 @@ function CreateTestcase() {
               <textarea
                 {...register("output")}
                 className="btn-border input-style form-control"
-                placeholder="Output"
+                defaultValue={testcase?.output}
                 type="text"
               >
               </textarea>
@@ -110,7 +145,7 @@ function CreateTestcase() {
               onClick={handleSubmit(onSubmit)}
             >
               <span className="uploadBtnText"> 
-                Create Testcase
+                Update Testcase
               </span>
             </button> 
 
@@ -124,4 +159,4 @@ function CreateTestcase() {
   );
 }
 
-export default CreateTestcase;
+export default EditTestcase;
