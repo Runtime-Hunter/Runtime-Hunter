@@ -45,7 +45,36 @@ export async function getUserSubmissions(req, res) {
             throw err;
         });
 }
+
 export async function addSubmission(req, res) {
+    let db_connect = getDb("runtime-hunter");
+
+    let submission = {
+        submissionId: ObjectId(),
+        userId: req.body.userId,
+        courseId: req.body.courseId,
+        levelId: req.body.levelId,
+        timeSubmitted: req.body.timeSubmitted,
+        status: req.body.testcases.map(x => x.status).every(Boolean),
+        testcases: req.body.testcases,
+        language: req.body.language.label,
+    };
+
+    const submissionRes = await db_connect.collection("submissions").insertOne(submission);
+    const userRes = await db_connect.collection("users").updateOne(
+        { "_id": ObjectId(req.body.userId) },
+        { $addToSet: { gamesBeingPlayed: req.body.courseId }, }
+    );
+
+    if (submission.status)
+        await db_connect.collection("users").updateOne(
+            { "_id": ObjectId(req.body.userId) },
+            { $addToSet: { correctlySolvedQuestions: req.body.levelId }, }
+        );
+    return res.json(submissionRes);
+}
+
+export async function adddSubmission(req, res) {
     let db_connect = getDb("runtime-hunter");
 
     let submission = {
