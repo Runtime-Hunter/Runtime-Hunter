@@ -155,8 +155,6 @@ function QuestionPage() {
 
     }
 
-
-
     let submission = {
       userId: currentUser._id,
       courseId: courseId,
@@ -181,7 +179,6 @@ function QuestionPage() {
 
   return (
     <div>
-
       <Header />
       <Container
         fluid
@@ -297,32 +294,21 @@ function QuestionPage() {
 
                     {submissionHistory.length > 0 ?
                       <table className='submissons-table'>
-                        <tr>
-                          <th>Submission Time</th>
-                          <th>Status</th>
-                          <th>Runtime</th>
-                          <th>Language</th>
-                        </tr>
-                        {
-                          submissionHistory.map(item => {
-                            return (
-                              <tr key={item._id}>
-                                <td>{`${item.timeSubmitted.slice(0, 10)} ${item.timeSubmitted.slice(11, 19)} `}</td>
-                                <td
-                                  style={
-                                    item.status ?
-                                      { color: "green" } :
-                                      { color: "red" }
+                        <thead>
 
-                                  }
-                                >{item.status ? "Accepted" : "Failed"}
-                                </td>
-                                <td>{item.runtime * 1000} ms</td>
-                                <td>{item.language.label}</td>
-                              </tr>
-                            )
-                          })
-                        }
+                          <tr>
+                            <th>Submission Time</th>
+                            <th>Status</th>
+                            <th>Testcases</th>
+                            {/* <th>Runtime</th> */}
+                            <th>Language</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+
+                          {submissionHistory.map(sub => SubmissionRow(sub))}
+
+                        </tbody>
 
                       </table> : <h6 style={{ marginTop: "25px" }}>You have no previous submission...</h6>
 
@@ -383,7 +369,6 @@ function QuestionPage() {
               </Col>
               <Col>
                 <Button
-
                   style={{ marginTop: "10px", display: "flex", marginLeft: "auto" }}
                   onClick={submit}
                 >Compile & Run
@@ -434,5 +419,26 @@ const LanguagesDropdown = ({ onSelectChange }) => {
     </div>
   );
 };
+
+const SubmissionRow = (sub) => {
+  return (
+    <>
+      <tr key={sub._id}>
+        <td>{`${sub.timeSubmitted.slice(0, 10)} ${sub.timeSubmitted.slice(11, 16)} `}</td>
+        <td
+          style={
+            sub.status ?
+              { color: "green" } :
+              { color: "red" }
+          }
+        >{sub.status ? "Accepted" : "Failed"}
+        </td>
+        <td> {sub.testcases.reduce((r, x) => r + (x.status ? 1 : 0), 0)} / {sub.testcases.length}</td>
+        {/* <td> ms</td> */}
+        <td>{sub.language}</td>
+      </tr>
+    </>
+  )
+}
 
 export default QuestionPage;
