@@ -24,21 +24,11 @@ function QuestionPage() {
     languageOptions[0]
   );
 
-
-
   const [question, setQuestion] = useState();
   const [code, setCode] = useState(
     lang ? (localStorage.getItem(`${courseId}-${levelId}-${lang.value}`) ? localStorage.getItem(`${courseId}-${levelId}-${lang.value}`) : (question ? question.codeCpp : lang.default)) : languageOptions[0].default
   );
-  const [output, setOutput] = useState("");
-  const [details, setDetails] = useState("");
-  const [testcaseResults, setTestcaseResults] = useState([]);
 
-  // const createMarkup = (html) => {
-  //   return  {
-  //     __html: DOMPurify.sanitize(html)
-  //   }
-  // }
   const [submissionHistory, setSubmissionHistory] = useState([])
 
   function changeLang(language) {
@@ -94,22 +84,6 @@ function QuestionPage() {
     }
   }, [question])
 
-
-
-  async function getTestcases() {
-
-    const testcases = await axios.get(`${process.env.REACT_APP_URL}/api/testcase/${courseId}/${levelId}`,).then(res => {
-      if (res.data !== null) {
-        return res.data;
-      }
-      else {
-        navigate("/error");
-      }
-    }).catch(err => console.log(err))
-
-    return testcases;
-  }
-
   async function getSubmissionHistory() {
 
     const req_body = {
@@ -129,104 +103,82 @@ function QuestionPage() {
   }
 
   async function submit() {
-    setOutput("");
-    setDetails("Creating submission...\n");
+    let testcases = await axios.get(`${process.env.REACT_APP_URL}/api/testcase/${courseId}/${levelId}`);
+    testcases = testcases.data;
 
-    await getTestcases().then(async (testcases) => {
-      for (let i = 0; i < testcases.length; i++) {
-        console.log(testcases[i].input);
-        // const formData = {
-        //   "language_id": lang.id,
-        //   "source_code": code,
-        //   ...( testcases[i].input !== "" && { "stdin": testcases[i].input }),
-        //   // "expected_output": testcases[i].output,
-        // };
-        const formData = {
-          "language_id": lang.id,
-          "source_code": base64_encode(code),
-          ...(testcases[i].input !== "" && { "stdin": base64_encode(testcases[i].input) }),
-          // "expected_output": encode(testcases[i].output),
-        };
+    let results = [];
 
-        const response = await fetch(
-          process.env.REACT_APP_RAPID_API_URL + "?base64_encoded=true",
-          {
-            method: "POST",
-            // params: { base64_encoded: "true", fields: "*" },
-            headers: {
-              "x-rapidapi-host": process.env.REACT_APP_RAPID_API_HOST,
-              "x-rapidapi-key": process.env.REACT_APP_RAPID_API_KEY,
-              "content-type": "application/json",
-              accept: "application/json",
-            },
-            body: JSON.stringify(formData),
-          }
-        );
-        const jsonResponse = await response.json();
-        console.log("submission first result", jsonResponse)
+    for (let i = 0; i < testcases.length; i++) {
+      const formData = {
+        "language_id": lang.id,
+        "source_code": base64_encode(code),
+        ...(testcases[i].input !== "" && { "stdin": base64_encode(testcases[i].input) }),
+      };
 
-        const submissionResult = await fetch(
-          process.env.REACT_APP_RAPID_API_URL + "/" + jsonResponse.token,
-          // process.env.REACT_APP_RAPID_API_URL + "/bca25837-c46c-4a0f-9ab3-3f3552b2c667/?base64_encoded=true",
-          {
-            method: "GET",
-            // params: { base64_encoded: "true", fields: "*" }
-            headers: {
-              "x-rapidapi-host": process.env.REACT_APP_RAPID_API_HOST,
-              "x-rapidapi-key": process.env.REACT_APP_RAPID_API_KEY,
-            },
-          }
-        );
+      const response = await fetch(
+        process.env.REACT_APP_RAPID_API_URL + "?base64_encoded=true",
+        {
+          method: "POST",
+          headers: {
+            "x-rapidapi-host": process.env.REACT_APP_RAPID_API_HOST,
+            "x-rapidapi-key": process.env.REACT_APP_RAPID_API_KEY,
+            "content-type": "application/json",
+            accept: "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      const jsonResponse = await response.json();
 
-        const subResult = await submissionResult.json();
-        console.log(subResult);
-        // const testcasResultStatus = (parseInt(subResult.stdout) === parseInt(testcases[i].output) ? true : false);
-        // const resultOutput = subResult.stdout.replace(/[\n\r]/g, "")
-        let resultOutput = subResult.stdout
-        resultOutput = String(resultOutput.trim())
-        setOutput(resultOutput)
-        console.log("Submission output: ", resultOutput)
-        console.log("question output: ", testcases[i].output)
-        // setOutput(testcases[i].output)
-        const testcasResultStatus = (resultOutput === String((testcases[i].output).trim()) ? true : false);
-        setTestcaseResults([...testcaseResults, testcasResultStatus])
-        const status = testcasResultStatus ? "Passed" : "Failed"
-        setDetails((oldDetail) => oldDetail + "\n" + "Input: " + testcases[i].input + " - Output: " + subResult.stdout + " => Result: " + status + "\n");
+      const submissionResult = await fetch(
+        process.env.REACT_APP_RAPID_API_URL + "/" + jsonResponse.token,
+        {
+          method: "GET",
+          headers: {
+            "x-rapidapi-host": process.env.REACT_APP_RAPID_API_HOST,
+            "x-rapidapi-key": process.env.REACT_APP_RAPID_API_KEY,
+          },
+        }
+      );
 
-        let submission = {
-          userId: currentUser._id,
-          courseId: courseId,
-          levelId: levelId,
-          timeSubmitted: new Date(Date.now()).toISOString(),
-          status: testcasResultStatus,
-          runtime: subResult.time,
-          language: lang,
-        };
+      const subResult = await submissionResult.json();
 
-        await axios.post(
-          `${process.env.REACT_APP_URL}/api/submission`,
-          submission,
-        )
-          .then(subRes => {
-            console.log("Added submission to db", subRes)
-          })
-          .catch(err => {
-            console.log("Error while adding submission to db", err)
-          })
-      }
-      setDetails((oldDetail) => oldDetail.replace("Creating submission...", "All tests finished"));
-      console.log("Testcase res: ", testcaseResults);
-      console.log("Details: ", details);
+      let resultOutput = subResult.stdout.trim()
+      const testcaseStatus = resultOutput === testcases[i].output.trim() ? true : false;
 
-    }).catch(err => {
-      console.log("Error: ", err);
-    })
+      results.push({
+        testcase: testcases[i],
+        userOutput: resultOutput,
+        status: testcaseStatus,
+        runtime: subResult.time,
+      });
+
+    }
+
+    let submission = {
+      userId: currentUser._id,
+      courseId: courseId,
+      levelId: levelId,
+      timeSubmitted: new Date(Date.now()).toISOString(),
+      testcases: results,
+      language: lang,
+    };
+
+    await axios.post(
+      `${process.env.REACT_APP_URL}/api/submission`,
+      submission,
+    )
+      .then(subRes => {
+        console.log("Added submission to db", subRes)
+      })
+      .catch(err => {
+        console.log("Error while adding submission to db", err)
+      })
   }
 
 
   return (
     <div>
-
       <Header />
       <Container
         fluid
@@ -342,32 +294,21 @@ function QuestionPage() {
 
                     {submissionHistory.length > 0 ?
                       <table className='submissons-table'>
-                        <tr>
-                          <th>Submission Time</th>
-                          <th>Status</th>
-                          <th>Runtime</th>
-                          <th>Language</th>
-                        </tr>
-                        {
-                          submissionHistory.map(item => {
-                            return (
-                              <tr key={item._id}>
-                                <td>{`${item.timeSubmitted.slice(0, 10)} ${item.timeSubmitted.slice(11, 19)} `}</td>
-                                <td
-                                  style={
-                                    item.status ?
-                                      { color: "green" } :
-                                      { color: "red" }
+                        <thead>
 
-                                  }
-                                >{item.status ? "Accepted" : "Failed"}
-                                </td>
-                                <td>{item.runtime * 1000} ms</td>
-                                <td>{item.language.label}</td>
-                              </tr>
-                            )
-                          })
-                        }
+                          <tr>
+                            <th>Submission Time</th>
+                            <th>Status</th>
+                            <th>Testcases</th>
+                            {/* <th>Runtime</th> */}
+                            <th>Language</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+
+                          {submissionHistory.map(sub => SubmissionRow(sub))}
+
+                        </tbody>
 
                       </table> : <h6 style={{ marginTop: "25px" }}>You have no previous submission...</h6>
 
@@ -407,7 +348,7 @@ function QuestionPage() {
                 autoFocus
                 value={code}
                 language={lang.value}
-                onChange={(evn) => setCode(evn.target.value)}
+                onChange={(evn) => saveCode(evn.target.value)}
                 padding={15}
                 minHeight={"480px"}
                 minLength={"400px"}
@@ -428,7 +369,6 @@ function QuestionPage() {
               </Col>
               <Col>
                 <Button
-
                   style={{ marginTop: "10px", display: "flex", marginLeft: "auto" }}
                   onClick={submit}
                 >Compile & Run
@@ -479,5 +419,26 @@ const LanguagesDropdown = ({ onSelectChange }) => {
     </div>
   );
 };
+
+const SubmissionRow = (sub) => {
+  return (
+    <>
+      <tr key={sub._id}>
+        <td>{`${sub.timeSubmitted.slice(0, 10)} ${sub.timeSubmitted.slice(11, 16)} `}</td>
+        <td
+          style={
+            sub.status ?
+              { color: "green" } :
+              { color: "red" }
+          }
+        >{sub.status ? "Accepted" : "Failed"}
+        </td>
+        <td> {sub.testcases.reduce((r, x) => r + (x.status ? 1 : 0), 0)} / {sub.testcases.length}</td>
+        {/* <td> ms</td> */}
+        <td>{sub.language}</td>
+      </tr>
+    </>
+  )
+}
 
 export default QuestionPage;
