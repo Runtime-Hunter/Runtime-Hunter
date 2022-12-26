@@ -9,12 +9,21 @@ import { useStore } from "../../store/store";
 import Header from "../header/header";
 import { languageOptions } from "./languageOptions";
 import "./question-page.css";
+import Canvas2 from "../../components/canvas/canvas";
 
 
 
 function QuestionPage() {
   const [state] = useStore();
   const { user: currentUser } = state;
+  
+  const [totalTime, setTotalTime] = useState(10);
+  const [numberOfTestcases, setNumberOfTestCases] = useState(5);
+  const [testCaseTimes, setTestCaseTimes] = useState([1, 1, 1, 1, 6])
+  const [failedTestCase, setFailedTestCase] = useState(-1);
+  const [gameArray, setGameArray] = useState([]);
+  const [gameStory, setGameStory] = useState([]);
+  const array = ["apple", "banana", "orange"];
 
   const navigate = useNavigate();
 
@@ -83,6 +92,22 @@ function QuestionPage() {
       setCode((lang.value == "python") ? question.codePy : question.codeCpp)
     }
   }, [question])
+
+
+  async function getTestcases() {
+
+    const testcases = await axios.get(`${process.env.REACT_APP_URL}/api/testcase/${courseId}/${levelId}`,).then(res => {
+      if (res.data !== null) {
+        return res.data;
+      }
+      else {
+        navigate("/error");
+      }
+    }).catch(err => console.log(err))
+
+    return testcases;
+  }
+
 
   async function getSubmissionHistory() {
 
@@ -176,6 +201,71 @@ function QuestionPage() {
       })
   }
 
+  function findGameArray()
+  {
+    const monsterAttackTime = totalTime / numberOfTestcases;
+    let result = [];
+    let currentTotalTime = 0;
+    let monsterAttackCount = 0;
+    let gameStoryGenerator = [];
+    for (let index = 0; index < numberOfTestcases; index++) {
+      monsterAttackCount = Math.floor(currentTotalTime / monsterAttackTime);
+      // console.log("before adding: ", monsterAttackCount, Math.floor(currentTotalTime / monsterAttackTime));
+      currentTotalTime += testCaseTimes[index];
+      if (currentTotalTime > totalTime) {
+        result.push(-1);
+        break;
+      }
+      // console.log("after adding: ", monsterAttackCount, Math.floor(currentTotalTime / monsterAttackTime));
+      
+      if(Math.floor(currentTotalTime / monsterAttackTime) > monsterAttackCount)
+      {
+        for (let i = 0; i < Math.floor(currentTotalTime / monsterAttackTime) - monsterAttackCount; i++) {
+          monsterAttackCount++;
+          gameStoryGenerator.push(`Monster attacks you after ${monsterAttackCount * monsterAttackTime} seconds.`)
+          result.push(-1);
+        }
+      }
+      result.push(1);
+      gameStoryGenerator.push(`You solved testcase ${index + 1} in ${testCaseTimes[index]} seconds.`)
+    }
+    console.log("result is here: ", gameStoryGenerator);
+
+    return result;
+  }
+  
+  function findGameStory()
+  {
+    const monsterAttackTime = totalTime / numberOfTestcases;
+    let result = [];
+    let currentTotalTime = 0;
+    let monsterAttackCount = 0;
+    let gameStoryGenerator = [];
+    for (let index = 0; index < numberOfTestcases; index++) {
+      monsterAttackCount = Math.floor(currentTotalTime / monsterAttackTime);
+      // console.log("before adding: ", monsterAttackCount, Math.floor(currentTotalTime / monsterAttackTime));
+      currentTotalTime += testCaseTimes[index];
+      if (currentTotalTime > totalTime) {
+        result.push(-1);
+        break;
+      }
+      // console.log("after adding: ", monsterAttackCount, Math.floor(currentTotalTime / monsterAttackTime));
+      
+      if(Math.floor(currentTotalTime / monsterAttackTime) > monsterAttackCount)
+      {
+        for (let i = 0; i < Math.floor(currentTotalTime / monsterAttackTime) - monsterAttackCount; i++) {
+          monsterAttackCount++;
+          gameStoryGenerator.push(`Monster attacks you after ${monsterAttackCount * monsterAttackTime} seconds.`)
+          result.push(-1);
+        }
+      }
+      result.push(1);
+      gameStoryGenerator.push(`You solved testcase ${index + 1} in ${testCaseTimes[index]} seconds.`)
+    }
+    console.log("result is here: ", gameStoryGenerator);
+
+    return gameStoryGenerator;
+  }
 
   return (
     <div>
@@ -399,6 +489,63 @@ function QuestionPage() {
           })) : ""} */}
         </Row>
 
+        <button
+          type="button"
+          className="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#staticBackdrop"
+        >
+  Launch static backdrop modal
+        </button>
+
+        <div
+          className="modal fade"
+          id="staticBackdrop"
+          data-bs-backdrop="static"
+          data-bs-keyboard="false"
+          tabIndex="-1"
+          aria-labelledby="staticBackdropLabel"
+          aria-hidden="true"
+        >
+          <div
+            style={{ width: "1500px" }}
+            className="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable game-modal"
+          >
+            <div className="modal-content">
+              <div className="modal-header">
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                >
+                </button>
+              </div>
+              <div className="modal-body">
+                <div className="row">
+                  <div className="col-9">
+                    <Canvas2 gameArray = {findGameArray()}></Canvas2>
+                  </div>
+                  <div className="col-3">
+                    <div>
+                      {findGameStory().map(item => (
+                        <p key={item}>{item}</p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  data-bs-dismiss="modal"
+                >Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </Container>
     </div>
   );

@@ -38,12 +38,19 @@ function CoursePage() {
   const [levelShouldOpen, setLevelShouldOpen] = useState(false);
   const { courseId } = useParams();
   const [course, setCourse] = useState();
-  const [levels, setLevels] = useState();
-  const [lastSolvedIdx, setLastSolvedIdx] = useState(0);
+  const [levels, setLevels] = useState([]);
   const [isFav, setIsFav] = useState(false);
+
+  const [levelsHtml, setLevelHtml] = useState([]);
 
   const navigate = useNavigate()
 
+
+  useEffect(() => {
+    listLevels(levels).then(res => {
+      setLevelHtml(res);
+    })
+  },[levels]);
 
   const fetchCourse = useCallback(
     async () => {
@@ -111,9 +118,16 @@ function CoursePage() {
     navigate(`/${courseId}/createQuestion`);
   }
 
-  const listLevels = (_levels) => {
+  const listLevels = async (_levels) => {
     let lastSolvedIdx = 0;
-    const correctlySolvedQuestions = currentUser.correctlySolvedQuestions;
+    let correctlySolvedQuestions = [];
+    await axios.get(`${process.env.REACT_APP_URL}/api/user/levels/${currentUser._id}`)
+      .then(res => {
+        correctlySolvedQuestions = res.data.correctlySolvedQuestions;
+      })
+      .catch(err => {
+        console.log(err);
+      })
 
     _levels.map((item, index)=> {
 
@@ -136,7 +150,7 @@ function CoursePage() {
             levelName={item.levelName}
             levelTags={item.levelTags ?? ""}
             difficulty={item.difficulty}
-            unlock={((lastSolvedIdx > 0 && index <= lastSolvedIdx + 1) || (lastSolvedIdx == 0 && index == 0)) ? true : false}
+            unlock={((lastSolvedIdx >= 0 && index <= lastSolvedIdx + 1) || (lastSolvedIdx == 0 && index == 0)) ? true : false}
             key={index}
           />
         </div>
@@ -198,7 +212,7 @@ function CoursePage() {
               <h4>Levels</h4>
               {levels != undefined ?
 
-                listLevels(levels)            :
+                levelsHtml.map(item => item)        :
 
                 <p>No level found for this course</p>
               }

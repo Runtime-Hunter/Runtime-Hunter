@@ -1,6 +1,4 @@
-
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
 import { Badge, NavItem } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { useStore } from "../../store/store";
@@ -26,6 +24,13 @@ function Level({ courseId, levelId, levelName, levelTags, difficulty, unlock }) 
       e.preventDefault();
       e.stopPropagation();
       navigate(`/courses/${courseId}/${levelId}/testcase`)
+    }
+  }
+  const seeTestcases = (e) => {
+    if (levelId !== "unknown" & courseId !== "unknown") {
+      e.preventDefault();
+      e.stopPropagation();
+      navigate(`/courses/${courseId}/${levelId}/testcases`)
     }
   }
 
@@ -78,6 +83,19 @@ function Level({ courseId, levelId, levelName, levelTags, difficulty, unlock }) 
               className='fa-solid fa-lock'
             />
             </div>}
+
+          {currentUser.userType == 2 &&
+            <div
+              className="col-2 align-self-center"
+            >
+              <button
+                className="search-bar-button"
+                onClick={(e) => seeTestcases(e)}
+              >
+                See Testcases
+              </button>
+            </div>
+          }
 
           {currentUser.userType == 2 &&
             <div

@@ -1,10 +1,11 @@
 import "dotenv/config.js";
 import express, { json, static as _static } from "express";
 const app = express();
+
 import cors from "cors";
 import path from "path";
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4800;
 import userRouter from "./routes/user.js";
 import levelsRouter from "./routes/level.js";
 import coursesRouter from "./routes/courses.js";

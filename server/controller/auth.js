@@ -73,7 +73,11 @@ export async function login(req, res) {
         });
 }
 export function getCorrectlySolvedQuestions(req, res) {
+    let db_connect = getDb("runtime-hunter");
     let userId = req.params.userId;
 
-    db_connect.collection("users").findOne();
+    db_connect.collection("users").findOne().then(user => {
+        return res.status(200).json({ correctlySolvedQuestions: user ? user.correctlySolvedQuestions : []});
+    });
+
 }
