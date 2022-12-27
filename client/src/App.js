@@ -70,7 +70,7 @@ function App() {
               element={<Courses />}
             />
             <Route
-              path="/courses/:searchQuery"
+              path="/courses/search/:searchQuery"
               element={<Courses />}
             />
             <Route

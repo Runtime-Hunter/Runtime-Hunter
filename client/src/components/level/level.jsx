@@ -60,7 +60,7 @@ function Level({ courseId, levelId, levelName, levelTags, difficulty, unlock }) 
           console.log("error in deleting course", err.message)
         })
     }
-    navigate("/courses/");
+    // navigate("/courses");
   }
 
   const difficulties = {

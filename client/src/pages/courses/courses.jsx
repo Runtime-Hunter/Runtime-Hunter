@@ -18,7 +18,6 @@ function Courses() {
         let courseList = [];
         data.forEach(course => {
           if(!searchQuery || searchQuery == " "){
-            console.log("here")
             courseList = courseList.concat(course)
           }
           else if((course.courseName).toLowerCase().includes(searchQuery.toLowerCase())){
@@ -66,7 +65,7 @@ function Courses() {
                   </div>
 
                 );
-              }) :<p>No course yet !!!</p>) :
+              }) :<p>No course found!</p>) :
             <p>Loading...</p>
 
           }

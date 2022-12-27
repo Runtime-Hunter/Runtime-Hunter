@@ -29,7 +29,7 @@ function Course({ courseId, courseName, description }) {
           console.log("error in deleting course", err.message)
         })
     }
-    navigate("/courses/");
+    navigate("/courses");
   }
 
   const updateCourse = ()=> {
@@ -45,7 +45,7 @@ function Course({ courseId, courseName, description }) {
     //       console.log("error in deleting course", err.message)
     //     })
     // }
-    // navigate("/courses/");
+    // navigate("/courses");
   }
 
 
