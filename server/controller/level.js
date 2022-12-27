@@ -158,14 +158,14 @@ export async function updateLevel(req, res){
 
     const updateDoc =  {
         $set: {
-            "levels.levelName": req.body.levelName,
-            "levels.levelTags": req.body.levelTags,
-            "levels.levelDescription": req.body.levelDescription,
-            "levels.levelSolution": req.body.levelSolution,
-            "levels.difficulty": req.body.difficulty,
-            "levels.levelIndex": req.body.levelIndex,
-            "levels.codeCpp": req.body.codeCpp,
-            "levels.codePy": req.body.codePy
+            "levels.$.levelName": req.body.levelName,
+            "levels.$.levelTags": req.body.levelTags,
+            "levels.$.levelDescription": req.body.levelDescription,
+            "levels.$.levelSolution": req.body.levelSolution,
+            "levels.$.difficulty": req.body.difficulty,
+            "levels.$.levelIndex": req.body.levelIndex,
+            "levels.$.codeCpp": req.body.codeCpp,
+            "levels.$.codePy": req.body.codePy
         }
     }
 
