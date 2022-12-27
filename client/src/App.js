@@ -14,11 +14,13 @@ import ErrorPage from "./pages/error-page/error-page";
 import Homepage from "./pages/homepage/homepage";
 import Landing from "./pages/landing/landing";
 import Login from "./pages/login/login";
+import ProfilePage from "./pages/profile-page/profile-page";
 import QuestionPage from "./pages/question-page/question-page";
 import Signup from "./pages/signup/signup";
-import ProfilePage from "./pages/profile-page/profile-page";
-import Testcases from "./pages/testcases-page/testcases-page";
 import EditTestcase from "./pages/testcase-page/testcase-page";
+import Testcases from "./pages/testcases-page/testcases-page";
+import UpdateCourse from "./pages/update-course/update-course";
+import UpdateQuestion from "./pages/update-question/update-question";
 
 import { useStore } from "./store/store";
 function App() {
@@ -62,6 +64,10 @@ function App() {
             <Route
               path="/signup"
               element={<Navigate to="/home"/>}
+            />
+            <Route
+              path="/courses"
+              element={<Courses />}
             />
             <Route
               path="/courses/:searchQuery"
@@ -116,6 +122,14 @@ function App() {
             <Route
               path="/courses/:courseId/:levelId/:testcaseId"
               element={<EditTestcase />}
+            />
+            <Route
+              path="/courses/update/:courseId"
+              element={<UpdateCourse />}
+            />
+            <Route
+              path="/courses/:courseId/:levelId/update"
+              element={<UpdateQuestion />}
             />
             <Route
               path="*"

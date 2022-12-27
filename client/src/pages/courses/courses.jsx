@@ -4,7 +4,6 @@ import { useParams } from "react-router";
 import Course from "../../components/course/course.jsx";
 import Layout from "../../components/layout/layout.jsx";
 
-
 function Courses() {
   const { searchQuery } = useParams();
 
@@ -55,7 +54,7 @@ function Courses() {
                     className="row mt-4"
                   >
                     <div
-                      className="col-10 col-lg-6"
+                      className="col-9"
                     >
                       <Course
                         courseId={item._id}
