@@ -2,10 +2,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 import axios from "axios";
-import { convertToRaw, EditorState } from "draft-js";
+import { ContentState, convertFromHTML, convertToRaw, EditorState } from "draft-js";
 import "draft-js/dist/Draft.css";
 import draftToHtml from "draftjs-to-html";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { Editor as DraftEditor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -15,8 +15,8 @@ import { useParams } from "react-router-dom";
 import { z } from "zod";
 import Footer from "../footer/footer.jsx";
 import Header from "../header/header.jsx";
-import { languageOptions } from "./../question-page/languageOptions";
-import "./create-question.css";
+import { languageOptions } from "../question-page/languageOptions";
+import "./update-question.css";
 
 
 
@@ -30,10 +30,11 @@ const createQuestionSchema = z
 
 
 
-function CreateQuestion() {
+function UpdateQuestion() {
 
   const navigate = useNavigate();
-  const { courseId } = useParams();
+  const { courseId, levelId } = useParams();
+  const [curLevel, setCurLevel] = useState();
 
   const [descEditorState, setDescEditorState] = useState(
     () => EditorState.createEmpty(),
@@ -63,6 +64,7 @@ function CreateQuestion() {
   }
 
   const handleDescEditorChange = (state) => {
+    console.log("state:", state)
     setDescEditorState(state);
     convertDescContentToHTML();
   }
@@ -87,10 +89,53 @@ function CreateQuestion() {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({
     resolver: zodResolver(createQuestionSchema),
     mode: "all",
   });
+
+
+  const fetchLevel = async () => {
+    await axios.get(`${process.env.REACT_APP_URL}/api/level/${courseId}/${levelId}`)
+      .then(res => {
+        console.log("fetched level", res)
+        setCurLevel(res.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+  useEffect(() => {
+    if(curLevel != null) {
+      console.log("giving default values")
+      setValue("levelName", (curLevel?.levelName));
+      setValue("levelTags", (curLevel?.levelTags));
+      setValue("levelIndex", (curLevel?.levelIndex));
+      setValue("difficulty", (curLevel?.difficulty));
+
+      const descContentDataState = ContentState.createFromBlockArray(convertFromHTML(curLevel.levelDescription));
+      const descEditorDataState = EditorState.createWithContent(descContentDataState);
+      setDescEditorState(descEditorDataState)
+
+      const solutionContentDataState = ContentState.createFromBlockArray(convertFromHTML(curLevel.levelSolution));
+      const solutionEditorDataState = EditorState.createWithContent(solutionContentDataState);
+      setSolutionEditorState(solutionEditorDataState)
+
+      setCodeCpp(curLevel?.codeCpp)
+      setCodePy(curLevel?.codePy)
+    }
+
+  }, [curLevel])
+
+  useEffect(() => {
+    fetchLevel()
+  }, [courseId, levelId])
+
+
+  const checkLevelUpdated = (updatedlevel) => {
+    console.log("passing this")
+  }
 
   const onSubmit = async (data) => {
     await convertDescContentToHTML();
@@ -109,20 +154,22 @@ function CreateQuestion() {
     }
 
     const level = {
-      levelName: data.levelName,
-      levelTags: data.levelTags,
-      levelDescription: descConvertedContent,
-      levelSolution: solutionConvertedContent,
-      difficulty: data.difficulty,
-      levelIndex: data.levelIndex,
-      testCases: data.testCases,
       courseId,
-      codeCpp: codeCpp,
-      codePy: codePy,
+      levelId,
+      levelName: data.levelName ?? curLevel.levelName,
+      levelTags: data.levelTags ?? curLevel.levelTags,
+      levelDescription: descConvertedContent  ?? curLevel.levelDescription,
+      levelSolution: solutionConvertedContent ?? curLevel.levelSolution,
+      difficulty: data.difficulty ?? curLevel.difficulty,
+      levelIndex: data.levelIndex ?? curLevel.levelIndex,
+      codeCpp: codeCpp ?? curLevel.codeCpp,
+      codePy: codePy ?? curLevel.codePy,
     };
 
+    console.log("updated level", level);
 
-    await axios.post(`${process.env.REACT_APP_URL}/api/level`, level).then(res => {
+
+    await axios.put(`${process.env.REACT_APP_URL}/api/level`, level).then(res => {
       setResponseMessage(res.data.message)
 
     }).catch(err => {
@@ -143,6 +190,7 @@ function CreateQuestion() {
                   {...register("levelName")}
                   className="btn-border input-style form-control"
                   placeholder="Question Name"
+                  defaultValue={curLevel?.levelName}
                   type="text"
                 >
                 </input>
@@ -156,6 +204,8 @@ function CreateQuestion() {
                   {...register("levelTags")}
                   className="btn-border input-style form-control"
                   placeholder="Question Tags"
+                  // defaultValue={curLevel?.levelTags}
+
                   type="text"
                 >
                 </input>
@@ -174,6 +224,10 @@ function CreateQuestion() {
                     wrapperClassName="wrapper-class"
                     editorClassName="editor-class"
                     toolbarClassName="toolbar-class"
+                    // initialContentState={curLevel?.levelDescription}
+                    // defaultContentState={curLevel?.levelDescription}
+                    // defaultEditorState={curLevel?.levelDescription}
+                    // dangerouslySetInnerHTML={{ __html: curLevel?.levelDescription }}
                   />
                 </div>
 
@@ -208,6 +262,8 @@ function CreateQuestion() {
                   name="difficulty"
                   id="difficulty"
                   {...register("difficulty")}
+                  defaultValue={curLevel?.difficulty}
+
                 >
                   <option value="easy">Easy</option>
                   <option value="medium">Medium</option>
@@ -224,6 +280,8 @@ function CreateQuestion() {
                   {...register("levelIndex")}
                   className="btn-border input-style form-control"
                   placeholder="Position of Question"
+                  defaultValue={curLevel?.levelIndex}
+
                   type="text"
                 >
                 </input>
@@ -305,7 +363,7 @@ function CreateQuestion() {
                 type="submit"
               >
                 <span className="uploadBtnText">
-              Create Question
+              Update Question
                 
                 </span>
               </button>
@@ -320,4 +378,4 @@ function CreateQuestion() {
   );
 }
 
-export default CreateQuestion;
+export default UpdateQuestion;

@@ -1,5 +1,5 @@
-import { getDb } from "../db/conn.js";
 import { ObjectId } from "mongodb";
+import { getDb } from "../db/conn.js";
 
 export async function getCourses(req, res) {
     let db_connect = getDb("runtime-hunter");
@@ -58,4 +58,45 @@ export async function addCourse(req, res) {
                 return res.json({ message: 'This course has already been created!' });
             }
         });
+}
+
+export async function deleteCourse(req, res){
+    console.log(req.body.courseId)
+    let db_connect = getDb("runtime-hunter");
+    db_connect.collection("courses")
+    .deleteOne({ "_id": ObjectId(req.body.courseId) })
+    .then(result => {
+        return res.json({ message: 'Successfully deleted course' })
+    })
+    .catch(err => {
+        return err;
+    })
+}
+
+
+export async function updateCourse(req, res){
+    let db_connect = getDb("runtime-hunter");
+    // create a filter 
+    const filter = { "_id": ObjectId(req.body.courseId) };
+
+    // this option instructs the method to create a document if no documents match the filter
+    const options = { upsert: false };
+
+    // create a document 
+    const updateDoc = {
+        $set: {
+            courseName: req.body.courseName,
+            description: req.body.description
+        },
+
+    };
+ console.log("here", updateDoc)
+    db_connect.collection("courses")
+    .updateOne(filter, updateDoc, options)
+    .then(result => {
+        return res.json({ message: 'Successfully updated course' })
+    })
+    .catch(err => {
+        return err;
+    })
 }

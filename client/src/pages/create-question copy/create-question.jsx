@@ -15,7 +15,7 @@ import { useParams } from "react-router-dom";
 import { z } from "zod";
 import Footer from "../footer/footer.jsx";
 import Header from "../header/header.jsx";
-import { languageOptions } from "./../question-page/languageOptions";
+import { languageOptions } from "../question-page/languageOptions";
 import "./create-question.css";
 
 

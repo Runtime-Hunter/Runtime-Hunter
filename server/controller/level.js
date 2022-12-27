@@ -1,5 +1,5 @@
-import { getDb } from "../db/conn.js";
 import { ObjectId } from "mongodb";
+import { getDb } from "../db/conn.js";
 import { arrayStringToObjectId } from "../utils/mongoUtils.js";
 
 export async function getLevels(req, res) {
@@ -41,8 +41,8 @@ export async function addLevel(req, res) {
         levelDescription: req.body.levelDescription,
         levelSolution: req.body.levelSolution,
         levelIndex: req.body.levelIndex,
-        codeCpp: req.body.inputCpp,
-        codePy: req.body.inputPy,
+        codeCpp: req.body.codeCpp,
+        codePy: req.body.codePy,
         difficulty: req.body.difficulty,
         testCases: req.body.testCases ? req.body.testCases : [],
         levelTags: req.body.levelTags,
@@ -107,4 +107,89 @@ export async function bulkGetLevels(req, res) {
         return res.json(levels);
 
     });
+}
+
+export async function deleteLevel(req, res){
+    let db_connect = getDb("runtime-hunter");
+
+    db_connect.collection("courses")
+    .updateOne({
+        "_id": ObjectId(req.body.courseId),
+    }, {$pull: { levels: { "levelId": req.body.levelId } } },  
+       {multi: true} )
+    .then((result) => {
+        return res.json({ message: 'Deleted level succesfully' });
+    })
+    .catch((err) => {
+        console.log("err: ", err);
+        throw err;
+    });
+}
+
+export async function updateLevel(req, res){
+    let db_connect = getDb("runtime-hunter");
+    // // create a filter 
+    // const filter = { "_id": ObjectId(req.body.courseId), "levels.levelId": req.body.levelId };
+
+    // // this option instructs the method to create a document if no documents match the filter
+    // const options = { upsert: false };
+
+    // create a document 
+    // const updateDoc = {
+    //     $set: {
+    //     levelName: req.body.levelName,
+    //     levelTags: req.body.levelTags,
+    //     levelDescription: req.body.levelDescription,
+    //     levelSolution: req.body.levelSolution,
+    //     difficulty: req.body.difficulty,
+    //     levelIndex: req.body.levelIndex,
+    //     codeCpp: req.body.codeCpp,
+    //     codePy: req.body.codePy,
+    //     },
+
+    // };
+
+    // const dataToBeUpdated = {
+    //     "levels.levelName": req.body.levelName,
+    //     "levels.levelTags": req.body.levelTags,
+    //     "levels.levelDescription": req.body.levelDescription,
+    //     "levels.levelSolution": req.body.levelSolution,
+    //     "levels.difficulty": req.body.difficulty,
+    //     "levels.levelIndex": req.body.levelIndex,
+    //     "levels.codeCpp": req.body.codeCpp,
+    //     "levels.codePy": req.body.codePy,
+    // }
+
+    const updateDoc =  {
+        $set: {
+            "levels.$.levelName": req.body.levelName,
+            "levels.$.levelTags": req.body.levelTags,
+            "levels.$.levelDescription": req.body.levelDescription,
+            "levels.$.levelSolution": req.body.levelSolution,
+            "levels.$.difficulty": req.body.difficulty,
+            "levels.$.levelIndex": req.body.levelIndex,
+            "levels.$.codeCpp": req.body.codeCpp,
+            "levels.$.codePy": req.body.codePy
+        }
+    }
+
+    const filter = { "levels.levelId":req.body.levelId }
+    // const conditionFilters = {
+    //     arrayFilters: [
+    //             { 'e1.showByDate.shows': { '$exists': true } },
+    //             { 'e2.showSeats': { '$exists': true } },
+    //             { 'e3.seat_status': false }
+    //         ]
+    // }
+    console.log("updatedDoc", updateDoc);
+    db_connect.collection("courses")
+    .updateOne(filter, updateDoc)
+    .then(result => {
+        console.log("res:", result)
+        return res.json({ message: 'Successfully updated level' })
+    })
+    .catch(err => {
+        console.log("err", err)
+        return err;
+    })
 }
