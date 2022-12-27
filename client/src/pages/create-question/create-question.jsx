@@ -117,8 +117,8 @@ function CreateQuestion() {
       levelIndex: data.levelIndex,
       testCases: data.testCases,
       courseId,
-      inputCpp: codeCpp,
-      inputPy: codePy,
+      codeCpp: codeCpp,
+      codePy: codePy,
     };
 
 

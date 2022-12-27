@@ -110,16 +110,20 @@ export async function bulkGetLevels(req, res) {
 }
 
 export async function deleteLevel(req, res){
-    console.log(req.body.courseId)
     let db_connect = getDb("runtime-hunter");
+
     db_connect.collection("courses")
-    .deleteOne({ "_id": ObjectId(req.body.courseId), "levels.levelId": req.body.levelId })
-    .then(result => {
-        return res.json({ message: 'Successfully deleted level' })
+    .updateOne({
+        "_id": ObjectId(req.body.courseId),
+    }, {$pull: { levels: { "levelId": req.body.levelId } } },  
+       {multi: true} )
+    .then((result) => {
+        return res.json({ message: 'Deleted level succesfully' });
     })
-    .catch(err => {
-        return err;
-    })
+    .catch((err) => {
+        console.log("err: ", err);
+        throw err;
+    });
 }
 
 export async function updateLevel(req, res){

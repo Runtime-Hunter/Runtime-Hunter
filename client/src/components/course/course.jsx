@@ -79,8 +79,6 @@ function Course({ courseId, courseName, description }) {
               className='icon'
               size={24}
             />
-
-
           </div>
         </div>
       </button>

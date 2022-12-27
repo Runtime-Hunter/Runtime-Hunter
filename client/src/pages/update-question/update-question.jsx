@@ -156,14 +156,14 @@ function UpdateQuestion() {
     const level = {
       courseId,
       levelId,
-      levelName: data.levelName,
-      levelTags: data.levelTags,
-      levelDescription: descConvertedContent,
-      levelSolution: solutionConvertedContent,
-      difficulty: data.difficulty,
-      levelIndex: data.levelIndex,
-      codeCpp: codeCpp,
-      codePy: codePy,
+      levelName: data.levelName ?? curLevel.levelName,
+      levelTags: data.levelTags ?? curLevel.levelTags,
+      levelDescription: descConvertedContent  ?? curLevel.levelDescription,
+      levelSolution: solutionConvertedContent ?? curLevel.levelSolution,
+      difficulty: data.difficulty ?? curLevel.difficulty,
+      levelIndex: data.levelIndex ?? curLevel.levelIndex,
+      codeCpp: codeCpp ?? curLevel.codeCpp,
+      codePy: codePy ?? curLevel.codePy,
     };
 
     console.log("updated level", level);
