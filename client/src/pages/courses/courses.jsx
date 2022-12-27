@@ -4,7 +4,6 @@ import { useParams } from "react-router";
 import Course from "../../components/course/course.jsx";
 import Layout from "../../components/layout/layout.jsx";
 
-
 function Courses() {
   const { searchQuery } = useParams();
 
@@ -19,7 +18,6 @@ function Courses() {
         let courseList = [];
         data.forEach(course => {
           if(!searchQuery || searchQuery == " "){
-            console.log("here")
             courseList = courseList.concat(course)
           }
           else if((course.courseName).toLowerCase().includes(searchQuery.toLowerCase())){
@@ -55,7 +53,7 @@ function Courses() {
                     className="row mt-4"
                   >
                     <div
-                      className="col-10 col-lg-6"
+                      className="col-9"
                     >
                       <Course
                         courseId={item._id}
@@ -67,7 +65,7 @@ function Courses() {
                   </div>
 
                 );
-              }) :<p>No course yet !!!</p>) :
+              }) :<p>No course found!</p>) :
             <p>Loading...</p>
 
           }

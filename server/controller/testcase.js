@@ -83,7 +83,7 @@ export async function updateTestcase(req, res) {
 
 export async function deleteTestcase(req, res) {
     let db_connect = getDb("runtime-hunter");
- 
+    
     db_connect.collection("courses")
         .updateOne({
             "_id": ObjectId(req.params.courseId),

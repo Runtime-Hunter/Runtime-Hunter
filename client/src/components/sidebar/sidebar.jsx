@@ -43,7 +43,7 @@ function Sidebar() {
           </li>
           <hr className="sidebar-divider solid"></hr>
           <li>
-            <Link to="/courses/ ">
+            <Link to="/courses">
               <span>
                 <AiFillFolder />
               </span>
