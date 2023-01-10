@@ -1,18 +1,32 @@
+
+
+.course-button {
+  :hover{
+    cursor: default;
+  }
+}
+
 .course-button:hover {
     a {
       color: white;
+      cursor: pointer;
     }
   }
   
   .course-link {
     color: #1c9941;
     text-decoration: none !important;
+    cursor: pointer;
+
   }
   
   .course-link:hover {
     color: white;
     text-decoration: underline !important;
+    cursor: pointer;
+
   }
+
   
   .course-note-text {
     margin-bottom: 0px !important;
@@ -23,3 +37,18 @@
   .text-start:hover {
     text-decoration: underline !important;
   }
+
+.icon {
+    cursor: pointer;
+    margin-left: 5px;
+    :hover {
+      color:rgb(175, 86, 86);
+      cursor: pointer;
+    }
+}
+
+.edit {
+  :hover {
+    cursor: pointer;
+  }
+}

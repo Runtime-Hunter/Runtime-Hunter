@@ -20,7 +20,7 @@ const Header = () => {
 
 
   async function handleSearch() {
-    navigate(`/courses/${searchQuery}`);
+    navigate(`/courses/search/${searchQuery}`);
   }
 
   return (

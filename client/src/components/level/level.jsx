@@ -1,5 +1,7 @@
+import axios from "axios";
 import PropTypes from "prop-types";
-import { Badge, NavItem } from "react-bootstrap";
+import { Badge } from "react-bootstrap";
+import { RiDeleteBinLine as DeleteIcon } from "react-icons/ri";
 import { useNavigate } from "react-router";
 import { useStore } from "../../store/store";
 import "../level/level.scss";
@@ -34,6 +36,32 @@ function Level({ courseId, levelId, levelName, levelTags, difficulty, unlock }) 
     }
   }
 
+  const updateLevel = (e) => {
+    if (levelId !== "unknown" & courseId !== "unknown") {
+      e.preventDefault();
+      e.stopPropagation();
+      navigate(`/courses/${courseId}/${levelId}/update`)
+    }
+  }
+
+
+  const deleteLevel = ()=> {
+    if(courseId) {
+      axios.delete(`${process.env.REACT_APP_URL}/api/level`, 
+        { data: { courseId, levelId } })
+        .then(res => {
+          console.log("deleted level:",res.data.message)
+          // navigate(`/courses/${courseId}`)
+          // window.location.replace(`/courses/${courseId}`);
+          window.location.reload(false);
+
+        })
+        .catch(err => {
+          console.log("error in deleting course", err.message)
+        })
+    }
+    // navigate("/courses");
+  }
 
   const difficulties = {
     "easy": { color: "success", label: "Easy" },
@@ -43,11 +71,11 @@ function Level({ courseId, levelId, levelName, levelTags, difficulty, unlock }) 
 
   return (
     <div>
-      <div className="col-12 mb-1 btn btn-block btn-outline-success course-button">
+      <div className="col-12 mb-3 btn btn-block btn-outline-success course-button">
         <div className="row justify-content-between">
 
           <div
-            className="col-8 courseName"
+            className="col-5 courseName"
           >
             {unlock || currentUser.userType == 2 ?
               <a
@@ -85,29 +113,47 @@ function Level({ courseId, levelId, levelName, levelTags, difficulty, unlock }) 
             </div>}
 
           {currentUser.userType == 2 &&
+
+          <>
             <div
-              className="col-2 align-self-center"
+              className="col-2 align-self-center level-btn"
             >
               <button
-                className="search-bar-button"
+                className="btn btn-success btn-sm"
                 onClick={(e) => seeTestcases(e)}
               >
                 See Testcases
               </button>
             </div>
-          }
 
-          {currentUser.userType == 2 &&
             <div
-              className="col-2 align-self-center"
+              className="col-2 align-self-center level-btn"
             >
               <button
-                className="search-bar-button"
+                className="btn btn-success btn-sm"
                 onClick={(e) => addTestcase(e)}
               >
                 Add Testcase
               </button>
             </div>
+            <div
+              className="col-2 align-self-center level-btn"
+            >
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={(e) => updateLevel(e)}
+              >
+                Edit Level
+              </button>
+            </div>
+            <div className='col-1 align-self-center'>
+              <DeleteIcon
+                onClick={deleteLevel}
+                className='icon'
+                size={24}
+              />
+            </div>
+          </>
           }
         </div>
       </div>
