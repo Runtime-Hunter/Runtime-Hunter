@@ -150,7 +150,7 @@ function CoursePage() {
             levelName={item.levelName}
             levelTags={item.levelTags ?? ""}
             difficulty={item.difficulty}
-            unlock={((lastSolvedIdx >= 0 && index <= lastSolvedIdx + 1) || (lastSolvedIdx == 0 && index == 0)) ? true : false}
+            unlock={((lastSolvedIdx > 0 && index <= lastSolvedIdx + 1) || (lastSolvedIdx == 0 && index == 0)) ? true : false}
             key={index}
           />
         </div>
